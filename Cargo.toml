@@ -1,0 +1,7 @@
+[workspace]
+members = [
+  "plugins/animate-logo",
+  "plugins/docker",
+  "plugins/github-stats",
+]
+resolver = "2"
