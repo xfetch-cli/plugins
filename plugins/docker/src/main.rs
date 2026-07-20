@@ -1,40 +1,20 @@
-use serde::Deserialize;
-use serde::Serialize;
-use std::io::{self, Read, Write};
 use std::process::Command;
-
-#[derive(Debug, Deserialize)]
-#[allow(dead_code)]
-struct PluginRequest {
-    version: Option<u32>,
-    kind: Option<String>,
-    args: Option<PluginArgs>,
-}
-
-#[derive(Debug, Deserialize)]
-struct PluginArgs {}
-
-#[derive(Debug, Serialize)]
-struct PluginResponse {
-    lines: Vec<String>,
-}
+use xfetch_plugin_api::{EmptyArgs, read_info_plugin_args_or_default, write_info_lines};
 
 fn main() {
-    let mut input = String::new();
-    if io::stdin().read_to_string(&mut input).is_err() {
-        return;
-    }
-
-    let _request: PluginRequest = match serde_json::from_str(&input) {
+    let _args = match read_info_plugin_args_or_default::<EmptyArgs>() {
         Ok(value) => value,
-        Err(_) => return,
+        Err(err) => {
+            eprintln!("{}", err);
+            std::process::exit(1);
+        }
     };
 
     let lines = get_docker_info();
 
-    let response = PluginResponse { lines };
-    if let Ok(body) = serde_json::to_string(&response) {
-        let _ = io::stdout().write_all(body.as_bytes());
+    if let Err(err) = write_info_lines(lines) {
+        eprintln!("{}", err);
+        std::process::exit(1);
     }
 }
 
@@ -48,7 +28,7 @@ fn get_docker_info() -> Vec<String> {
     match info_output {
         Ok(output) if output.status.success() => {
             let stats = String::from_utf8_lossy(&output.stdout);
-            let parts: Vec<&str> = stats.trim().split_whitespace().collect();
+            let parts: Vec<&str> = stats.split_whitespace().collect();
             if parts.len() >= 4 {
                 let total = parts[0];
                 let running = parts[1];

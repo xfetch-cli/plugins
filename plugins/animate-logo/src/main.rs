@@ -1,49 +1,17 @@
-use serde::{Deserialize, Serialize};
-use std::io::{self, Read, Write};
-
-#[derive(Debug, Deserialize, Default)]
-#[serde(default)]
-struct PluginRequest {
-    version: Option<u32>,
-    kind: Option<String>,
-    lines: Vec<String>,
-    frames: Option<Vec<Vec<String>>>,
-    args: Option<PluginArgs>,
-}
-
-#[derive(Debug, Deserialize, Default)]
-#[serde(default)]
-struct PluginArgs {
-    fps: Option<u64>,
-    duration_ms: Option<u64>,
-    #[serde(rename = "loop")]
-    loop_enabled: Option<bool>,
-    style: Option<String>,
-}
-
-#[derive(Debug, Serialize)]
-struct PluginResponse {
-    frames: Vec<Frame>,
-}
-
-#[derive(Debug, Serialize)]
-struct Frame {
-    delay_ms: u64,
-    lines: Vec<String>,
-}
+use xfetch_plugin_api::{
+    AnimationFrame, read_logo_animation_request, write_logo_animation_frames,
+};
 
 fn main() {
-    let mut input = String::new();
-    if io::stdin().read_to_string(&mut input).is_err() {
-        return;
-    }
-
-    let request: PluginRequest = match serde_json::from_str(&input) {
+    let request = match read_logo_animation_request() {
         Ok(value) => value,
-        Err(_) => return,
+        Err(err) => {
+            eprintln!("{}", err);
+            std::process::exit(1);
+        }
     };
 
-    let args = request.args.unwrap_or_default();
+    let args = request.args;
     let fps = clamp(args.fps.unwrap_or(12), 1, 60);
     let frame_delay = 1000 / fps;
     let duration_ms = std::cmp::max(frame_delay, args.duration_ms.unwrap_or(1200));
@@ -51,7 +19,7 @@ fn main() {
     let style = args.style.as_deref().unwrap_or("sweep");
     let frame_sets = request.frames.unwrap_or_default();
 
-    let frames: Vec<Frame> = match style {
+    let frames: Vec<AnimationFrame> = match style {
         "frame" if !frame_sets.is_empty() => {
             generate_ascii_frame_animation(&frame_sets, frame_count, frame_delay)
         }
@@ -63,33 +31,33 @@ fn main() {
         _ => generate_sweep_animation(&request.lines, frame_count, frame_delay),
     };
 
-    let response = PluginResponse { frames };
-    if let Ok(body) = serde_json::to_string(&response) {
-        let _ = io::stdout().write_all(body.as_bytes());
+    if let Err(err) = write_logo_animation_frames(frames) {
+        eprintln!("{}", err);
+        std::process::exit(1);
     }
 }
 
-fn generate_sweep_animation(lines: &[String], count: u64, delay: u64) -> Vec<Frame> {
+fn generate_sweep_animation(lines: &[String], count: u64, delay: u64) -> Vec<AnimationFrame> {
     (0..count)
-        .map(|i| Frame {
+        .map(|i| AnimationFrame {
             delay_ms: delay,
             lines: lines.iter().map(|l| color_sweep(l, i as usize)).collect(),
         })
         .collect()
 }
 
-fn generate_wave_animation(lines: &[String], count: u64, delay: u64) -> Vec<Frame> {
+fn generate_wave_animation(lines: &[String], count: u64, delay: u64) -> Vec<AnimationFrame> {
     (0..count)
-        .map(|i| Frame {
+        .map(|i| AnimationFrame {
             delay_ms: delay,
             lines: lines.iter().map(|l| color_wave(l, i as usize)).collect(),
         })
         .collect()
 }
 
-fn generate_rainbow_animation(lines: &[String], count: u64, delay: u64) -> Vec<Frame> {
+fn generate_rainbow_animation(lines: &[String], count: u64, delay: u64) -> Vec<AnimationFrame> {
     (0..count)
-        .map(|i| Frame {
+        .map(|i| AnimationFrame {
             delay_ms: delay,
             lines: lines
                 .iter()
@@ -99,12 +67,12 @@ fn generate_rainbow_animation(lines: &[String], count: u64, delay: u64) -> Vec<F
         .collect()
 }
 
-fn generate_sparkle_animation(lines: &[String], count: u64, delay: u64) -> Vec<Frame> {
+fn generate_sparkle_animation(lines: &[String], count: u64, delay: u64) -> Vec<AnimationFrame> {
     let mut rng: u32 = 1;
     (0..count)
         .map(|_| {
             rng = rng.wrapping_mul(1_103_515_245).wrapping_add(12_345);
-            Frame {
+            AnimationFrame {
                 delay_ms: delay,
                 lines: lines.iter().map(|l| color_sparkle(l, rng)).collect(),
             }
@@ -112,9 +80,9 @@ fn generate_sparkle_animation(lines: &[String], count: u64, delay: u64) -> Vec<F
         .collect()
 }
 
-fn generate_breathing_animation(lines: &[String], count: u64, delay: u64) -> Vec<Frame> {
+fn generate_breathing_animation(lines: &[String], count: u64, delay: u64) -> Vec<AnimationFrame> {
     (0..count)
-        .map(|i| Frame {
+        .map(|i| AnimationFrame {
             delay_ms: delay,
             lines: lines
                 .iter()
@@ -124,14 +92,18 @@ fn generate_breathing_animation(lines: &[String], count: u64, delay: u64) -> Vec
         .collect()
 }
 
-fn generate_static_animation(lines: &[String], _count: u64, delay: u64) -> Vec<Frame> {
-    vec![Frame {
+fn generate_static_animation(lines: &[String], _count: u64, delay: u64) -> Vec<AnimationFrame> {
+    vec![AnimationFrame {
         delay_ms: delay,
         lines: lines.to_vec(),
     }]
 }
 
-fn generate_ascii_frame_animation(frame_sets: &[Vec<String>], count: u64, delay: u64) -> Vec<Frame> {
+fn generate_ascii_frame_animation(
+    frame_sets: &[Vec<String>],
+    count: u64,
+    delay: u64,
+) -> Vec<AnimationFrame> {
     if frame_sets.is_empty() {
         return Vec::new();
     }
@@ -150,7 +122,7 @@ fn generate_ascii_frame_animation(frame_sets: &[Vec<String>], count: u64, delay:
     (0..count)
         .map(|i| {
             let idx = i as usize % normalized.len();
-            Frame {
+            AnimationFrame {
                 delay_ms: delay,
                 lines: normalized[idx].clone(),
             }
@@ -181,7 +153,7 @@ fn color_wave(line: &str, frame: usize) -> String {
             continue;
         }
         let wave = ((idx as f64 * 0.5 + frame as f64 * 0.3).sin() * 3.0) as isize;
-        let color = PALETTE[((wave + 3).max(0).min(5) as usize) % PALETTE.len()];
+        let color = PALETTE[((wave + 3).clamp(0, 5) as usize) % PALETTE.len()];
         out.push_str(&format!("\x1b[{}m{}\x1b[0m", color, ch));
     }
     out

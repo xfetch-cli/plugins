@@ -5,3 +5,6 @@ members = [
   "plugins/github-stats",
 ]
 resolver = "2"
+
+[workspace.dependencies]
+xfetch-plugin-api = { git = "https://github.com/xfetch-cli/api", package = "xfetch-plugin-api" }

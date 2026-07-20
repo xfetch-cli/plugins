@@ -7,6 +7,16 @@
   plugin.
 </p>
 
+<p>
+  The shared protocol crate is maintained in
+  <a href="https://github.com/xfetch-cli/api">xfetch-cli/api</a>.
+</p>
+
+<p>
+  Official plugins and third-party plugins are expected to use this crate instead of
+  reimplementing protocol parsing manually.
+</p>
+
 <h2>Table of Contents</h2>
 
 <ul>
@@ -206,56 +216,28 @@ edition = "2024"
   implementation. Its source is at <code>plugins/animate-logo/src/main.rs</code>.
 </p>
 
-<p>Minimal plugin skeleton in Rust:</p>
+<p>Minimal plugin skeleton in Rust using the shared crate:</p>
 
-<pre><code class="language-rust">use serde::{Deserialize, Serialize};
-use std::io::{self, Read, Write};
+<pre><code class="language-rust">use xfetch_plugin_api::{
+    read_info_plugin_args_or_default,
+    write_info_lines,
+};
 
-#[derive(Debug, Deserialize)]
-struct PluginRequest {
-    version: Option&lt;u32&gt;,
-    kind: Option&lt;String&gt;,
-    lines: Vec&lt;String&gt;,
-    frames: Option&lt;Vec&lt;Vec&lt;String&gt;&gt;&gt;,
-    args: Option&lt;PluginArgs&gt;,
-}
-
-#[derive(Debug, Deserialize)]
-struct PluginArgs {
-    fps: Option&lt;u64&gt;,
-    duration_ms: Option&lt;u64&gt;,
-    #[serde(rename = "loop")]
-    loop_enabled: Option&lt;bool&gt;,
-    style: Option&lt;String&gt;,
-}
-
-#[derive(Debug, Serialize)]
-struct PluginResponse {
-    frames: Vec&lt;Frame&gt;,
-}
-
-#[derive(Debug, Serialize)]
-struct Frame {
-    delay_ms: u64,
-    lines: Vec&lt;String&gt;,
-}
+#[derive(Debug, Default, serde::Deserialize)]
+struct PluginArgs {}
 
 fn main() {
-    let mut input = String::new();
-    if io::stdin().read_to_string(&amp;mut input).is_err() {
-        return;
-    }
-
-    let request: PluginRequest = match serde_json::from_str(&amp;input) {
+    let _args = match read_info_plugin_args_or_default::&lt;PluginArgs&gt;() {
         Ok(value) =&gt; value,
-        Err(_) =&gt; return,
+        Err(err) =&gt; {
+            eprintln!("{}", err);
+            std::process::exit(1);
+        }
     };
 
-    // Your animation logic here...
-
-    let response = PluginResponse { frames };
-    if let Ok(body) = serde_json::to_string(&amp;response) {
-        let _ = io::stdout().write_all(body.as_bytes());
+    if let Err(err) = write_info_lines(vec!["hello from plugin".to_string()]) {
+        eprintln!("{}", err);
+        std::process::exit(1);
     }
 }
 </code></pre>
@@ -307,8 +289,8 @@ xfetch
 
 <ul>
   <li>Write all code, comments, and documentation in English.</li>
-  <li>Use <code>serde</code> and <code>serde_json</code> for JSON serialization.</li>
-  <li>Handle errors gracefully — write errors to stderr and exit with non-zero.</li>
+  <li>Prefer the shared <code>xfetch-plugin-api</code> crate for protocol types and JSON IO.</li>
+  <li>Handle protocol and output errors explicitly — write errors to stderr and exit with non-zero.</li>
   <li>Do not use external display or terminal libraries; the core handles rendering.</li>
   <li>Keep the plugin focused on a single responsibility (e.g., logo animation).</li>
   <li>Minimize dependencies to keep build times fast.</li>

@@ -60,6 +60,11 @@
   <code>plugins/&lt;name&gt;</code>, which keeps the root clean as the ecosystem grows.
 </p>
 
+<p>
+  The shared wire protocol used by the core and plugins is maintained in
+  <a href="https://github.com/xfetch-cli/api">xfetch-cli/api</a>.
+</p>
+
 <h2>Installed Binary Directory</h2>
 
 <ul>

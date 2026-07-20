@@ -1,62 +1,45 @@
 use serde::Deserialize;
-use serde::Serialize;
-use std::io::{self, Read, Write};
 use std::process::Command;
+use xfetch_plugin_api::{read_info_plugin_args_or_default, write_info_lines};
 
-#[derive(Debug, Deserialize)]
-#[allow(dead_code)]
-struct PluginRequest {
-    version: Option<u32>,
-    kind: Option<String>,
-    args: Option<PluginArgs>,
-}
-
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Default, Deserialize)]
 struct PluginArgs {
     username: Option<String>,
     token: Option<String>,
     max_lines: Option<usize>,
 }
 
-#[derive(Debug, Serialize)]
-struct PluginResponse {
-    lines: Vec<String>,
-}
-
 fn main() {
-    let mut input = String::new();
-    if io::stdin().read_to_string(&mut input).is_err() {
-        return;
-    }
-
-    let request: PluginRequest = match serde_json::from_str(&input) {
+    let args = match read_info_plugin_args_or_default::<PluginArgs>() {
         Ok(value) => value,
-        Err(_) => return,
+        Err(err) => {
+            eprintln!("{}", err);
+            std::process::exit(1);
+        }
     };
 
-    let username = request
-        .args
-        .as_ref()
-        .and_then(|a| a.username.clone())
+    let username = args
+        .username
+        .clone()
         .or_else(|| std::env::var("GITHUB_USER").ok())
         .filter(|u| !u.is_empty());
 
-    let max_lines = request.args.as_ref().and_then(|a| a.max_lines);
+    let max_lines = args.max_lines;
 
     let lines = match username {
         Some(user) => {
-            let mut stats = get_github_stats(&user, request.args.as_ref().and_then(|a| a.token.as_deref()));
+            let mut stats = get_github_stats(&user, args.token.as_deref());
             if let Some(limit) = max_lines {
                 stats.truncate(limit);
             }
             stats
-        },
+        }
         None => vec![" GitHub: no username configured".to_string()],
     };
 
-    let response = PluginResponse { lines };
-    if let Ok(body) = serde_json::to_string(&response) {
-        let _ = io::stdout().write_all(body.as_bytes());
+    if let Err(err) = write_info_lines(lines) {
+        eprintln!("{}", err);
+        std::process::exit(1);
     }
 }
 
