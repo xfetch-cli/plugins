@@ -1,4 +1,5 @@
-<h1>xfetch Plugins</h1>
+<h1 align="center">
+<img src="https://raw.githubusercontent.com/xfetch-cli/assets/main/logo/banner/xfetch.svg" width="30%" alt="XFetch banner" />Plugins</h1>
 
 <p>
   Official plugins for <strong>xfetch</strong> live in this repository. Each plugin is a
