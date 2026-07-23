@@ -1,8 +1,15 @@
 [workspace]
 members = [
   "plugins/animate-logo",
+  "plugins/display-resolution",
   "plugins/docker",
   "plugins/github-stats",
+  "plugins/music-player",
+  "plugins/theme-detection",
+  "plugins/theme-manager",
+  "plugins/timezone",
+  "plugins/user-info",
+  "plugins/weather",
 ]
 resolver = "2"
 

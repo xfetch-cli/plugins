@@ -1,0 +1,15 @@
+name: New Plugin Suggestion
+description: Propose a new official plugin
+labels: [new-plugin]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: What should the plugin do?
+    validations:
+      required: true
+  - type: textarea
+    id: source
+    attributes:
+      label: Data source or API
+      description: Where would the data come from?

@@ -1,0 +1,16 @@
+name: Feature Request
+description: Suggest an improvement for an existing plugin
+labels: [enhancement]
+body:
+  - type: input
+    id: plugin
+    attributes:
+      label: Plugin name
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What would you like to add or change?
+    validations:
+      required: true
