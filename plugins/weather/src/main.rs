@@ -26,15 +26,13 @@ fn main() {
 
 fn get_weather(location: Option<&str>, format: Option<&str>) -> Vec<String> {
     let loc = location.unwrap_or("");
-    let fmt = format.unwrap_or("%c+%t+%w+%h+%p");
+    let fmt = format.unwrap_or("%C|%t|%w|%h|%p");
 
-    let mut url = if loc.is_empty() {
-        "https://wttr.in/?format={}".to_string()
+    let url = if loc.is_empty() {
+        format!("https://wttr.in/?format={}", fmt)
     } else {
-        format!("https://wttr.in/{}?format={{}}", loc)
+        format!("https://wttr.in/{}?format={}", loc, fmt)
     };
-
-    url = url.replace("{}", fmt);
 
     let output = match Command::new("curl")
         .args(["-s", "--max-time", "10", &url])
@@ -49,36 +47,38 @@ fn get_weather(location: Option<&str>, format: Option<&str>) -> Vec<String> {
         return vec![" Weather: no data".to_string()];
     }
 
-    let parts: Vec<&str> = raw.split(',').map(|s| s.trim()).collect();
+    let parts: Vec<&str> = raw.split('|').map(|s| s.trim()).collect();
     let mut result = Vec::new();
 
     if parts.len() >= 4 {
-        let condition = parts[0];
-        let temp = parts[1];
-        let wind = parts[2];
-        let humidity = parts[3];
+        let condition = parts[0].trim();
+        let temp = parts[1].trim();
+        let wind = parts[2].trim();
+        let humidity = parts[3].trim();
+
+        if condition.is_empty() && temp.is_empty() && wind.is_empty() {
+            result.push(format!(" Weather: {}", raw));
+            return result;
+        }
 
         let icon = match condition {
-            c if c.contains("Clear") || c.contains("Sunny") => "☀",
-            c if c.contains("Cloud") || c.contains("Overcast") => "☁",
-            c if c.contains("Rain") || c.contains("Drizzle") => "🌧",
-            c if c.contains("Snow") => "🌨",
-            c if c.contains("Thunder") || c.contains("Storm") => "⛈",
-            c if c.contains("Fog") || c.contains("Mist") => "🌫",
-            c if c.contains("Partly") => "⛅",
-            _ => "",
+            c if c.contains("Clear") || c.contains("Sunny") => "\u{e30d}",
+            c if c.contains("Cloud") || c.contains("Overcast") => "\u{e302}",
+            c if c.contains("Rain") || c.contains("Drizzle") => "\u{e315}",
+            c if c.contains("Snow") || c.contains("Ice") => "\u{e318}",
+            c if c.contains("Thunder") || c.contains("Storm") => "\u{e31a}",
+            c if c.contains("Fog") || c.contains("Mist") || c.contains("Haze") => "\u{e376}",
+            c if c.contains("Partly") => "\u{e312}",
+            _ => "\u{e30d}",
         };
 
         result.push(format!("{} {} {}", icon, temp, condition));
 
-        if parts.len() >= 5 {
-            let precip = parts[4];
-            result.push(format!("   Humidity: {}", humidity));
-            result.push(format!("   Wind: {}", wind));
+        let precip = parts.get(4).map(|s| s.trim()).unwrap_or("");
+        result.push(format!("  \u{e36e} Humidity: {}", humidity));
+        result.push(format!("  \u{e374} Wind: {}", wind));
+        if !precip.is_empty() {
             result.push(format!("   Precipitation: {}", precip));
-        } else {
-            result.push(format!("   Humidity: {}", humidity));
-            result.push(format!("   Wind: {}", wind));
         }
     } else {
         result.push(format!(" Weather: {}", raw));
