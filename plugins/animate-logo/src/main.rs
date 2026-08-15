@@ -14,9 +14,18 @@ fn main() {
     let args = request.args;
     let fps = clamp(args.fps.unwrap_or(12), 1, 60);
     let frame_delay = 1000 / fps;
-    let duration_ms = std::cmp::max(frame_delay, args.duration_ms.unwrap_or(1200));
-    let frame_count = std::cmp::max(1, duration_ms / frame_delay);
     let style = args.style.as_deref().unwrap_or("sweep");
+
+    let frame_count = if args.duration_ms.is_none()
+        && style == "frame"
+        && request.frames.as_ref().is_some_and(|sets| !sets.is_empty())
+    {
+        request.frames.as_ref().unwrap().len() as u64
+    } else {
+        let duration_ms = std::cmp::max(frame_delay, args.duration_ms.unwrap_or(1200));
+        std::cmp::max(1, duration_ms / frame_delay)
+    };
+
     let frame_sets = request.frames.unwrap_or_default();
 
     let frames: Vec<AnimationFrame> = match style {
