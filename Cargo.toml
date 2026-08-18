@@ -10,6 +10,7 @@ members = [
   "plugins/timezone",
   "plugins/user-info",
   "plugins/weather",
+  "plugins/temperature",
 ]
 resolver = "2"
 

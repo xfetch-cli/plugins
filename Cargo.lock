@@ -258,6 +258,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "xfetch-plugin-temperature"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "xfetch-plugin-api",
+]
+
+[[package]]
 name = "xfetch-plugin-theme-detection"
 version = "0.1.0"
 dependencies = [
