@@ -1,6 +1,7 @@
 use serde::Deserialize;
 use std::process::Command;
-use xfetch_plugin_api::{read_info_plugin_args_or_default, write_info_lines};
+use std::time::Duration;
+use xfetch_plugin_api::{read_info_plugin_args_or_default, with_timeout, write_info_lines};
 
 #[derive(Debug, Default, Deserialize)]
 struct PluginArgs {
@@ -9,33 +10,39 @@ struct PluginArgs {
     max_lines: Option<usize>,
 }
 
+/// Several GitHub API calls (curl, ~10 s max each) need a generous budget.
+const BUDGET: Duration = Duration::from_secs(25);
+
 fn main() {
-    let args = match read_info_plugin_args_or_default::<PluginArgs>() {
-        Ok(value) => value,
-        Err(err) => {
-            eprintln!("{}", err);
-            std::process::exit(1);
-        }
-    };
-
-    let username = args
-        .username
-        .clone()
-        .or_else(|| std::env::var("GITHUB_USER").ok())
-        .filter(|u| !u.is_empty());
-
-    let max_lines = args.max_lines;
-
-    let lines = match username {
-        Some(user) => {
-            let mut stats = get_github_stats(&user, args.token.as_deref());
-            if let Some(limit) = max_lines {
-                stats.truncate(limit);
+    let lines = with_timeout(BUDGET, || {
+        let args = match read_info_plugin_args_or_default::<PluginArgs>() {
+            Ok(value) => value,
+            Err(err) => {
+                eprintln!("{}", err);
+                std::process::exit(1);
             }
-            stats
+        };
+
+        let username = args
+            .username
+            .clone()
+            .or_else(|| std::env::var("GITHUB_USER").ok())
+            .filter(|u| !u.is_empty());
+
+        let max_lines = args.max_lines;
+
+        match username {
+            Some(user) => {
+                let mut stats = get_github_stats(&user, args.token.as_deref());
+                if let Some(limit) = max_lines {
+                    stats.truncate(limit);
+                }
+                stats
+            }
+            None => vec!["GitHub: no username configured".to_string()],
         }
-        None => vec![" GitHub: no username configured".to_string()],
-    };
+    })
+    .unwrap_or_else(|_| vec!["GitHub: timed out".to_string()]);
 
     if let Err(err) = write_info_lines(lines) {
         eprintln!("{}", err);

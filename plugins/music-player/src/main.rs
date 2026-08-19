@@ -1,19 +1,26 @@
 use std::process::Command;
-use xfetch_plugin_api::{read_info_plugin_args_or_default, write_info_lines};
+use std::time::Duration;
+use xfetch_plugin_api::{read_info_plugin_args_or_default, with_timeout, write_info_lines};
 
 #[derive(Debug, Default, serde::Deserialize)]
 struct PluginArgs {}
 
-fn main() {
-    let _args = match read_info_plugin_args_or_default::<PluginArgs>() {
-        Ok(value) => value,
-        Err(err) => {
-            eprintln!("{}", err);
-            std::process::exit(1);
-        }
-    };
+/// Local probes only (playerctl/mpd/spotify); 2 s is plenty.
+const BUDGET: Duration = Duration::from_secs(2);
 
-    let lines = get_music_info();
+fn main() {
+    let lines = with_timeout(BUDGET, || {
+        let _args = match read_info_plugin_args_or_default::<PluginArgs>() {
+            Ok(value) => value,
+            Err(err) => {
+                eprintln!("{}", err);
+                std::process::exit(1);
+            }
+        };
+
+        get_music_info()
+    })
+    .unwrap_or_else(|_| vec!["Music: timed out".to_string()]);
 
     if let Err(err) = write_info_lines(lines) {
         eprintln!("{}", err);

@@ -83,6 +83,9 @@
     <tr>
       <td><pre> Wednesday, 23 July 2026  14:30<br>   America/New York (EST -05:00)</pre></td>
     </tr>
+    <tr>
+      <td><pre>Windows:<br> miércoles, 19 agosto 2026  12:57<br>   Romance Standard Time (+01:00)</pre></td>
+    </tr>
   </tbody>
 </table>
 
@@ -90,8 +93,8 @@
 
 <ol>
   <li>xfetch sends a JSON request with <code>kind: "info_provider"</code>.</li>
-  <li>The plugin detects the timezone from <code>/etc/timezone</code>, <code>/etc/localtime</code>, or <code>timedatectl</code>.</li>
-  <li>The plugin runs <code>date</code> to get the current time and UTC offset.</li>
+  <li>On Linux/macOS the plugin detects the timezone from <code>/etc/timezone</code>, <code>/etc/localtime</code>, or <code>timedatectl</code> and runs GNU <code>date</code> for the current time and UTC offset.</li>
+  <li>On Windows it uses PowerShell (<code>Get-Date</code> for the local time, <code>Get-TimeZone</code> for the id and UTC offset).</li>
   <li>The plugin returns a JSON response with the formatted lines.</li>
   <li>xfetch displays them under the <code>plugin:timezone</code> module key.</li>
 </ol>
@@ -99,7 +102,6 @@
 <h2>Notes</h2>
 
 <ul>
-  <li>Timezone detection order: <code>/etc/timezone</code> → <code>/etc/localtime</code> symlink → <code>timedatectl</code>.</li>
-  <li>The <code>format</code> arg is passed directly to <code>date</code> — use standard <code>date</code> format specifiers.</li>
-  <li>Works on Linux, macOS, and most Unix-like systems.</li>
+  <li>Timezone detection order (Linux/macOS): <code>/etc/timezone</code> → <code>/etc/localtime</code> symlink → <code>timedatectl</code>.</li>
+  <li>The <code>format</code> arg is passed directly to GNU <code>date</code> — use standard <code>date</code> format specifiers. On Windows it is ignored (no GNU date); the timezone id and UTC offset are always shown.</li>
 </ul>

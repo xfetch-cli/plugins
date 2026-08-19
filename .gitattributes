@@ -1,0 +1,27 @@
+# Auto-detect text files and always use LF everywhere (Linux, macOS and
+# Windows). CRLF is never checked out, so no autocrlf warnings on Windows.
+* text=auto eol=lf
+
+# Rust source code
+*.rs linguist-language=Rust text
+
+# Configuration files
+*.toml linguist-language=TOML text
+*.jsonc linguist-language=JSON text
+*.json linguist-language=JSON text
+Cargo.lock linguist-language=TOML text
+
+# Scripts and CI
+*.sh linguist-language=Shell text eol=lf
+*.ps1 linguist-language=PowerShell text
+*.yml linguist-language=YAML text
+*.yaml linguist-language=YAML text
+
+# Documentation
+*.md linguist-language=Markdown text
+LICENSE linguist-language=Text text
+*.txt linguist-language=Text text
+
+# Git configuration
+.gitignore linguist-language=Ignore-List text
+.gitattributes linguist-language=Git-Attributes text

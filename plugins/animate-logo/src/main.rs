@@ -1,43 +1,56 @@
+use std::time::Duration;
 use xfetch_plugin_api::{
-    AnimationFrame, read_logo_animation_request, write_logo_animation_frames,
+    AnimationFrame, read_logo_animation_request, with_timeout, write_logo_animation_frames,
 };
 
+/// Frame generation is CPU-bound; the user-controlled duration can demand
+/// thousands of frames, so the budget is generous.
+const BUDGET: Duration = Duration::from_secs(10);
+
 fn main() {
-    let request = match read_logo_animation_request() {
-        Ok(value) => value,
-        Err(err) => {
-            eprintln!("{}", err);
+    let frames: Vec<AnimationFrame> = match with_timeout(BUDGET, || {
+        let request = match read_logo_animation_request() {
+            Ok(value) => value,
+            Err(err) => {
+                eprintln!("{}", err);
+                std::process::exit(1);
+            }
+        };
+
+        let args = request.args;
+        let fps = clamp(args.fps.unwrap_or(12), 1, 60);
+        let frame_delay = 1000 / fps;
+        let style = args.style.as_deref().unwrap_or("sweep");
+
+        let frame_count = if args.duration_ms.is_none()
+            && style == "frame"
+            && request.frames.as_ref().is_some_and(|sets| !sets.is_empty())
+        {
+            request.frames.as_ref().unwrap().len() as u64
+        } else {
+            let duration_ms = std::cmp::max(frame_delay, args.duration_ms.unwrap_or(1200));
+            std::cmp::max(1, duration_ms / frame_delay)
+        };
+
+        let frame_sets = request.frames.unwrap_or_default();
+
+        match style {
+            "frame" if !frame_sets.is_empty() => {
+                generate_ascii_frame_animation(&frame_sets, frame_count, frame_delay)
+            }
+            "wave" => generate_wave_animation(&request.lines, frame_count, frame_delay),
+            "rainbow" => generate_rainbow_animation(&request.lines, frame_count, frame_delay),
+            "sparkle" => generate_sparkle_animation(&request.lines, frame_count, frame_delay),
+            "breathing" => generate_breathing_animation(&request.lines, frame_count, frame_delay),
+            "none" => generate_static_animation(&request.lines, frame_count, frame_delay),
+            _ => generate_sweep_animation(&request.lines, frame_count, frame_delay),
+        }
+    }) {
+        Ok(frames) => frames,
+        Err(_) => {
+            eprintln!("animate-logo: timed out");
             std::process::exit(1);
         }
-    };
-
-    let args = request.args;
-    let fps = clamp(args.fps.unwrap_or(12), 1, 60);
-    let frame_delay = 1000 / fps;
-    let style = args.style.as_deref().unwrap_or("sweep");
-
-    let frame_count = if args.duration_ms.is_none()
-        && style == "frame"
-        && request.frames.as_ref().is_some_and(|sets| !sets.is_empty())
-    {
-        request.frames.as_ref().unwrap().len() as u64
-    } else {
-        let duration_ms = std::cmp::max(frame_delay, args.duration_ms.unwrap_or(1200));
-        std::cmp::max(1, duration_ms / frame_delay)
-    };
-
-    let frame_sets = request.frames.unwrap_or_default();
-
-    let frames: Vec<AnimationFrame> = match style {
-        "frame" if !frame_sets.is_empty() => {
-            generate_ascii_frame_animation(&frame_sets, frame_count, frame_delay)
-        }
-        "wave" => generate_wave_animation(&request.lines, frame_count, frame_delay),
-        "rainbow" => generate_rainbow_animation(&request.lines, frame_count, frame_delay),
-        "sparkle" => generate_sparkle_animation(&request.lines, frame_count, frame_delay),
-        "breathing" => generate_breathing_animation(&request.lines, frame_count, frame_delay),
-        "none" => generate_static_animation(&request.lines, frame_count, frame_delay),
-        _ => generate_sweep_animation(&request.lines, frame_count, frame_delay),
     };
 
     if let Err(err) = write_logo_animation_frames(frames) {

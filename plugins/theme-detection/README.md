@@ -71,6 +71,10 @@
       <td><pre> GTK: Breeze (light)<br>   Plasma: breeze-dark<br>   Colors: BreezeDark<br>   Icons: breeze-dark<br>   Cursor: breeze_cursors</pre></td>
     </tr>
     <tr>
+      <td>Windows</td>
+      <td><pre>  Windows Theme: Dark<br>  Accent: #00B9FF</pre></td>
+    </tr>
+    <tr>
       <td>No theme detected</td>
       <td><code> Theme: not detected</code></td>
     </tr>
@@ -81,8 +85,8 @@
 
 <ol>
   <li>xfetch sends a JSON request with <code>kind: "info_provider"</code>.</li>
-  <li>The plugin reads GTK settings via <code>gsettings get org.gnome.desktop.interface</code>.</li>
-  <li>KDE Plasma themes are read from <code>~/.config/plasmarc</code> and <code>~/.config/kdeglobals</code>.</li>
+  <li>On Linux/macOS the plugin reads GTK settings via <code>gsettings get org.gnome.desktop.interface</code>; KDE Plasma themes are read from <code>~/.config/plasmarc</code> and <code>~/.config/kdeglobals</code>.</li>
+  <li>On Windows it reads the registry: light/dark mode from <code>HKCU\...\Themes\Personalize\AppsUseLightTheme</code> and the accent color from <code>HKCU\...\DWM\ColorizationColor</code>.</li>
   <li>The plugin returns a JSON response with the formatted lines.</li>
   <li>xfetch displays them under the <code>plugin:theme-detection</code> module key.</li>
 </ol>
