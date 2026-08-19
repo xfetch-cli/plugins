@@ -21,7 +21,7 @@
     </tr>
     <tr>
       <td><strong>Registry</strong></td>
-      <td><code>github.com/xfetch-cli/configs</code> (themes/index.json)</td>
+      <td><code>github.com/xfetch-cli/themes</code> (index.json)</td>
     </tr>
   </table>
 </div>
@@ -138,7 +138,7 @@
       <td><code>registry</code></td>
       <td><code>string</code></td>
       <td>No</td>
-      <td>Custom registry URL (defaults to xfetch-cli/configs)</td>
+      <td>Custom registry URL (defaults to xfetch-cli/themes)</td>
     </tr>
   </tbody>
 </table>

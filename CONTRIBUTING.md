@@ -19,6 +19,11 @@
   </li>
   <li>Document the plugin in its own <code>README.md</code> and in <a href="./README.md">README.md</a>.</li>
   <li>
+    Update the <a href="./docs/compatibility.md">platform compatibility
+    table</a> with the new plugin and its Linux/macOS/Windows support —
+    required for every new or modified plugin.
+  </li>
+  <li>
     Open a pull request with usage details and any required external
     dependencies. PRs that fail CI are rejected.
   </li>
