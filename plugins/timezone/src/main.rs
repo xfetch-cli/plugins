@@ -1,24 +1,33 @@
+#[cfg(not(target_os = "windows"))]
 use std::fs;
+#[cfg(not(target_os = "windows"))]
 use std::path::Path;
 use std::process::Command;
-use xfetch_plugin_api::{read_info_plugin_args_or_default, write_info_lines};
+use std::time::Duration;
+use xfetch_plugin_api::{read_info_plugin_args_or_default, with_timeout, write_info_lines};
 
 #[derive(Debug, Default, serde::Deserialize)]
 struct PluginArgs {
     format: Option<String>,
 }
 
-fn main() {
-    let args = match read_info_plugin_args_or_default::<PluginArgs>() {
-        Ok(value) => value,
-        Err(err) => {
-            eprintln!("{}", err);
-            std::process::exit(1);
-        }
-    };
+/// Local probes only (date/timedatectl); 2 s is plenty.
+const BUDGET: Duration = Duration::from_secs(2);
 
-    let fmt = args.format.as_deref().unwrap_or("%Z %z");
-    let lines = get_tz_info(fmt);
+fn main() {
+    let lines = with_timeout(BUDGET, || {
+        let args = match read_info_plugin_args_or_default::<PluginArgs>() {
+            Ok(value) => value,
+            Err(err) => {
+                eprintln!("{}", err);
+                std::process::exit(1);
+            }
+        };
+
+        let fmt = args.format.as_deref().unwrap_or("%Z %z");
+        get_tz_info(fmt)
+    })
+    .unwrap_or_else(|_| vec!["Timezone: timed out".to_string()]);
 
     if let Err(err) = write_info_lines(lines) {
         eprintln!("{}", err);
@@ -26,6 +35,8 @@ fn main() {
     }
 }
 
+/// Linux/macOS: `/etc/timezone`, `/etc/localtime`, `timedatectl` + GNU `date`.
+#[cfg(not(target_os = "windows"))]
 fn get_tz_info(format: &str) -> Vec<String> {
     let tz = detect_timezone();
     let tz_name = tz.as_deref().unwrap_or("unknown");
@@ -89,6 +100,54 @@ fn get_tz_info(format: &str) -> Vec<String> {
     result
 }
 
+/// Windows: `Get-TimeZone` + `Get-Date` via PowerShell.
+///
+/// The GNU `date` format string has no Windows equivalent, so the `format`
+/// arg is ignored here (it only applies on Linux/macOS).
+#[cfg(target_os = "windows")]
+fn get_tz_info(_format: &str) -> Vec<String> {
+    let mut result = Vec::new();
+
+    if let Some(dt) = run_windows_cmd(&[
+        "-NoProfile",
+        "-NonInteractive",
+        "-Command",
+        "[Console]::OutputEncoding=[Text.Encoding]::UTF8; Get-Date -Format 'dddd, dd MMMM yyyy  HH:mm'",
+    ]) {
+        result.push(format!("{} {}", "\u{f43a}", dt));
+    }
+
+    if let Some(tz) = run_windows_cmd(&[
+        "-NoProfile",
+        "-NonInteractive",
+        "-Command",
+        "[Console]::OutputEncoding=[Text.Encoding]::UTF8; $z=Get-TimeZone; $d=$z.BaseUtcOffset.Duration(); $s=if($z.BaseUtcOffset.Ticks -lt 0){'-'}else{'+'}; \"$($z.Id) ($s$($d.ToString('hh\\:mm')))\"",
+    ]) {
+        result.push(format!("  {} {}", "\u{f2f2}", tz));
+    }
+
+    if result.is_empty() {
+        result.push("Timezone: unknown".to_string());
+    }
+
+    result
+}
+
+#[cfg(target_os = "windows")]
+fn run_windows_cmd(args: &[&str]) -> Option<String> {
+    let output = Command::new("powershell").args(args).output().ok()?;
+    if !output.status.success() {
+        return None;
+    }
+    let s = String::from_utf8_lossy(&output.stdout).trim().to_string();
+    if s.is_empty() {
+        None
+    } else {
+        Some(s)
+    }
+}
+
+#[cfg(not(target_os = "windows"))]
 fn detect_timezone() -> Option<String> {
     let tz_file = Path::new("/etc/timezone");
     if tz_file.exists() {

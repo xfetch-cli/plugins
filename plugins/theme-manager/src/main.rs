@@ -1,10 +1,14 @@
 use serde::Deserialize;
 use std::path::PathBuf;
 use std::process::Command;
-use xfetch_plugin_api::{read_info_plugin_args_or_default, write_info_lines};
+use std::time::Duration;
+use xfetch_plugin_api::{read_info_plugin_args_or_default, with_timeout, write_info_lines};
 
 const DEFAULT_REGISTRY: &str =
     "https://raw.githubusercontent.com/xfetch-cli/configs/main/themes/index.json";
+
+/// Registry fetches go through curl with `--max-time 15`.
+const BUDGET: Duration = Duration::from_secs(20);
 
 #[derive(Debug, Deserialize)]
 #[serde(default)]
@@ -46,18 +50,21 @@ struct ThemeEntry {
 }
 
 fn main() {
-    let args = match read_info_plugin_args_or_default::<PluginArgs>() {
-        Ok(v) => v,
-        Err(err) => {
-            eprintln!("{}", err);
-            std::process::exit(1);
-        }
-    };
+    let lines = with_timeout(BUDGET, || {
+        let args = match read_info_plugin_args_or_default::<PluginArgs>() {
+            Ok(v) => v,
+            Err(err) => {
+                eprintln!("{}", err);
+                std::process::exit(1);
+            }
+        };
 
-    let lines = match handle_action(&args) {
-        Ok(lines) => lines,
-        Err(err) => vec![format!("Theme Manager: {}", err)],
-    };
+        match handle_action(&args) {
+            Ok(lines) => lines,
+            Err(err) => vec![format!("Theme Manager: {}", err)],
+        }
+    })
+    .unwrap_or_else(|_| vec!["Theme Manager: timed out".to_string()]);
 
     if let Err(err) = write_info_lines(lines) {
         eprintln!("{}", err);

@@ -1,4 +1,4 @@
-name: Rust Tests
+name: CI
 
 on:
   push:
@@ -7,9 +7,18 @@ on:
   pull_request:
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
+  ci:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
-      - run: cargo test --workspace
+      - name: CI (Linux/macOS)
+        if: runner.os != 'Windows'
+        run: bash ci/unix.sh
+      - name: CI (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: ./ci/windows.ps1

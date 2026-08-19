@@ -1,16 +1,23 @@
 use std::process::Command;
-use xfetch_plugin_api::{EmptyArgs, read_info_plugin_args_or_default, write_info_lines};
+use std::time::Duration;
+use xfetch_plugin_api::{EmptyArgs, read_info_plugin_args_or_default, with_timeout, write_info_lines};
+
+/// Local daemon query; generous enough for slow `docker info` startups.
+const BUDGET: Duration = Duration::from_secs(3);
 
 fn main() {
-    let _args = match read_info_plugin_args_or_default::<EmptyArgs>() {
-        Ok(value) => value,
-        Err(err) => {
-            eprintln!("{}", err);
-            std::process::exit(1);
-        }
-    };
+    let lines = with_timeout(BUDGET, || {
+        let _args = match read_info_plugin_args_or_default::<EmptyArgs>() {
+            Ok(value) => value,
+            Err(err) => {
+                eprintln!("{}", err);
+                std::process::exit(1);
+            }
+        };
 
-    let lines = get_docker_info();
+        get_docker_info()
+    })
+    .unwrap_or_else(|_| vec!["Docker: timed out".to_string()]);
 
     if let Err(err) = write_info_lines(lines) {
         eprintln!("{}", err);

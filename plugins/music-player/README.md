@@ -52,6 +52,16 @@
 
 <p>The music-player plugin does not require any arguments. It detects MPD via <code>mpc status</code> and Spotify via <code>playerctl</code>.</p>
 
+<h2>Platform Support</h2>
+
+<p>
+  <strong>Linux and macOS only.</strong> The plugin relies on
+  <code>mpc</code> (MPD CLI) and <code>playerctl</code> (MPRIS/D-Bus), which
+  are not available on Windows. On Windows the plugin responds with
+  <code>Music: no active player</code> — there is no plan to port it, since
+  Windows media control (SMTC) has no equivalent CLI to probe.
+</p>
+
 <h2>Output</h2>
 
 <table>

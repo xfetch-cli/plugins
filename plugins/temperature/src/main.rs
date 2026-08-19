@@ -1,4 +1,5 @@
-use xfetch_plugin_api::{read_info_plugin_args_or_default, write_info_lines};
+use std::time::Duration;
+use xfetch_plugin_api::{read_info_plugin_args_or_default, with_timeout, write_info_lines};
 
 #[derive(Debug, Default, serde::Deserialize)]
 struct PluginArgs {
@@ -6,16 +7,22 @@ struct PluginArgs {
     unit: Option<String>,
 }
 
-fn main() {
-    let args = match read_info_plugin_args_or_default::<PluginArgs>() {
-        Ok(value) => value,
-        Err(err) => {
-            eprintln!("{}", err);
-            std::process::exit(1);
-        }
-    };
+/// Local probes only (hwmon/sensors); 2 s is plenty.
+const BUDGET: Duration = Duration::from_secs(2);
 
-    let lines = get_temperature_info(args.unit.as_deref());
+fn main() {
+    let lines = with_timeout(BUDGET, || {
+        let args = match read_info_plugin_args_or_default::<PluginArgs>() {
+            Ok(value) => value,
+            Err(err) => {
+                eprintln!("{}", err);
+                std::process::exit(1);
+            }
+        };
+
+        get_temperature_info(args.unit.as_deref())
+    })
+    .unwrap_or_else(|_| vec!["Temperature: timed out".to_string()]);
 
     if let Err(err) = write_info_lines(lines) {
         eprintln!("{}", err);
