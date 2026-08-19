@@ -38,6 +38,10 @@
       <td>Animated ASCII logos with sweep, wave, rainbow, sparkle, breathing, and frame modes.</td>
     </tr>
     <tr>
+      <td><code>chocolatey</code></td>
+      <td>Counts packages installed via Chocolatey (Windows package manager).</td>
+    </tr>
+    <tr>
       <td><code>docker</code></td>
       <td>Displays Docker container statistics using the local Docker CLI.</td>
     </tr>
@@ -47,6 +51,11 @@
     </tr>
   </tbody>
 </table>
+
+<p>
+  See <a href="./docs/compatibility.md">Platform Compatibility</a> for which
+  plugins work on Linux, macOS and Windows.
+</p>
 
 <h2>Developing Locally</h2>
 

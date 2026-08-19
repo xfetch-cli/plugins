@@ -11,6 +11,7 @@
 ### Plugins (as of 2026-08-19)
 
 - `animate-logo` — logo animation for the daemon
+- `chocolatey` — count of packages installed via Chocolatey (Windows)
 - `display-resolution` — screen resolution
 - `docker` — container stats
 - `github-stats` — GitHub profile statistics

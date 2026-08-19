@@ -215,10 +215,19 @@ dependencies = [
 [[package]]
 name = "xfetch-plugin-api"
 version = "0.1.0"
-source = "git+https://github.com/xfetch-cli/api#673e86bd0fbedce894ecdc9a5e7d25ae99da9c36"
+source = "git+https://github.com/xfetch-cli/api#9ee7758cb83b794a330f67bf873e857d65e3eb07"
 dependencies = [
  "serde",
  "serde_json",
+]
+
+[[package]]
+name = "xfetch-plugin-chocolatey"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "xfetch-plugin-api",
 ]
 
 [[package]]

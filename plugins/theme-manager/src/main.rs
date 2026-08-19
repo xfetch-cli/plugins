@@ -5,7 +5,7 @@ use std::time::Duration;
 use xfetch_plugin_api::{read_info_plugin_args_or_default, with_timeout, write_info_lines};
 
 const DEFAULT_REGISTRY: &str =
-    "https://raw.githubusercontent.com/xfetch-cli/configs/main/themes/index.json";
+    "https://raw.githubusercontent.com/xfetch-cli/themes/main/index.json";
 
 /// Registry fetches go through curl with `--max-time 15`.
 const BUDGET: Duration = Duration::from_secs(20);
