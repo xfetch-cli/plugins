@@ -1,6 +1,8 @@
 use std::process::Command;
 use std::time::Duration;
-use xfetch_plugin_api::{EmptyArgs, read_info_plugin_args_or_default, with_timeout, write_info_lines};
+use xfetch_plugin_api::{
+    EmptyArgs, read_info_plugin_args_or_default, with_timeout, write_info_lines,
+};
 
 /// Local daemon query; generous enough for slow `docker info` startups.
 const BUDGET: Duration = Duration::from_secs(3);
@@ -29,7 +31,11 @@ fn get_docker_info() -> Vec<String> {
     let mut result = Vec::new();
 
     let info_output = Command::new("docker")
-        .args(["info", "--format", "{{.Containers}} {{.ContainersRunning}} {{.ContainersPaused}} {{.ContainersStopped}}"])
+        .args([
+            "info",
+            "--format",
+            "{{.Containers}} {{.ContainersRunning}} {{.ContainersPaused}} {{.ContainersStopped}}",
+        ])
         .output();
 
     match info_output {

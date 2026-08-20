@@ -88,7 +88,13 @@ fn get_mpd_status() -> Option<Vec<String>> {
 
 fn get_spotify_status() -> Option<Vec<String>> {
     let output = Command::new("playerctl")
-        .args(["-p", "spotify", "metadata", "--format", "{{artist}} - {{title}}"])
+        .args([
+            "-p",
+            "spotify",
+            "metadata",
+            "--format",
+            "{{artist}} - {{title}}",
+        ])
         .output()
         .ok()?;
 
@@ -100,9 +106,7 @@ fn get_spotify_status() -> Option<Vec<String>> {
         if paused.status.success() {
             let status = String::from_utf8_lossy(&paused.stdout).trim().to_string();
             if status == "Paused" {
-                return Some(vec![
-                    " Spotify: paused".to_string(),
-                ]);
+                return Some(vec![" Spotify: paused".to_string()]);
             }
         }
         return None;
@@ -113,7 +117,5 @@ fn get_spotify_status() -> Option<Vec<String>> {
         return None;
     }
 
-    Some(vec![
-        format!(" Spotify: {}", meta),
-    ])
+    Some(vec![format!(" Spotify: {}", meta)])
 }

@@ -14,7 +14,7 @@
   <li>Run <code>cargo test --workspace</code>.</li>
   <li>
     Run the full CI locally before opening the PR:
-    <code>bash ci/unix.sh</code> (Linux/macOS) or <code>./ci/windows.ps1</code>
+    <code>bash scripts/ci.sh</code> (Linux/macOS) or <code>./scripts/ci.ps1</code>
     (Windows). The CI checks tests <strong>and</strong> the plugin standard.
   </li>
   <li>Document the plugin in its own <code>README.md</code> and in <a href="./README.md">README.md</a>.</li>

@@ -1,6 +1,8 @@
 use std::process::Command;
 use std::time::Duration;
-use xfetch_plugin_api::{EmptyArgs, read_info_plugin_args_or_default, with_timeout, write_info_lines};
+use xfetch_plugin_api::{
+    EmptyArgs, read_info_plugin_args_or_default, with_timeout, write_info_lines,
+};
 
 /// `choco list` can be slow on first runs (package cache, license checks).
 const BUDGET: Duration = Duration::from_secs(10);
