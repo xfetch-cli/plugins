@@ -54,9 +54,18 @@ fn get_github_stats(username: &str, token: Option<&str>) -> Vec<String> {
     let mut result = Vec::new();
 
     let api_url = format!("https://api.github.com/users/{}", username);
-    let repos_url = format!("https://api.github.com/users/{}/repos?per_page=100&sort=pushed", username);
-    let prs_url = format!("https://api.github.com/search/issues?q=author:{} type:pr&per_page=0", username);
-    let issues_url = format!("https://api.github.com/search/issues?q=author:{} type:issue&per_page=0", username);
+    let repos_url = format!(
+        "https://api.github.com/users/{}/repos?per_page=100&sort=pushed",
+        username
+    );
+    let prs_url = format!(
+        "https://api.github.com/search/issues?q=author:{} type:pr&per_page=0",
+        username
+    );
+    let issues_url = format!(
+        "https://api.github.com/search/issues?q=author:{} type:issue&per_page=0",
+        username
+    );
 
     let user_info = fetch_json(&api_url);
     let repos_info = fetch_json(&repos_url);
@@ -72,18 +81,25 @@ fn get_github_stats(username: &str, token: Option<&str>) -> Vec<String> {
             let following = user["following"].as_u64().unwrap_or(0);
 
             let stars = match repos_info {
-                Ok(ref r) => r.as_array()
-                    .map(|arr| arr.iter().filter_map(|repo| repo["stargazers_count"].as_u64()).sum())
+                Ok(ref r) => r
+                    .as_array()
+                    .map(|arr| {
+                        arr.iter()
+                            .filter_map(|repo| repo["stargazers_count"].as_u64())
+                            .sum()
+                    })
                     .unwrap_or(0),
                 Err(_) => 0,
             };
 
-            let prs = prs_info.as_ref()
+            let prs = prs_info
+                .as_ref()
                 .ok()
                 .and_then(|r| r["total_count"].as_u64())
                 .unwrap_or(0);
 
-            let issues = issues_info.as_ref()
+            let issues = issues_info
+                .as_ref()
                 .ok()
                 .and_then(|r| r["total_count"].as_u64())
                 .unwrap_or(0);
@@ -135,6 +151,5 @@ fn fetch_json_with_token(url: &str, token: Option<&str>) -> Result<serde_json::V
         return Err("curl exited with error".to_string());
     }
 
-    serde_json::from_slice(&output.stdout)
-        .map_err(|e| format!("Failed to parse JSON: {}", e))
+    serde_json::from_slice(&output.stdout).map_err(|e| format!("Failed to parse JSON: {}", e))
 }

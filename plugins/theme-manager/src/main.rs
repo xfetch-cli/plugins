@@ -78,7 +78,10 @@ fn handle_action(args: &PluginArgs) -> Result<Vec<String>, String> {
         "search" => search_themes(args),
         "info" => theme_info(args),
         "install" => install_theme(args),
-        _ => Err(format!("Unknown action '{}'. Use list, search, info, or install.", args.action)),
+        _ => Err(format!(
+            "Unknown action '{}'. Use list, search, info, or install.",
+            args.action
+        )),
     }
 }
 
@@ -109,8 +112,7 @@ fn fetch_index(registry_url: &str) -> Result<ThemeIndex, String> {
         String::from_utf8_lossy(&output.stdout).to_string()
     };
 
-    serde_json::from_str(&data)
-        .map_err(|e| format!("Failed to parse theme registry: {}", e))
+    serde_json::from_str(&data).map_err(|e| format!("Failed to parse theme registry: {}", e))
 }
 
 fn theme_dir() -> PathBuf {
@@ -123,11 +125,16 @@ fn list_themes(args: &PluginArgs) -> Result<Vec<String>, String> {
     let index = fetch_index(registry_url)?;
 
     if index.themes.is_empty() {
-        return Ok(vec!["Theme Manager: no themes available in registry".to_string()]);
+        return Ok(vec![
+            "Theme Manager: no themes available in registry".to_string(),
+        ]);
     }
 
     let mut result = Vec::new();
-    result.push(format!("Theme Manager -- {} themes available", index.themes.len()));
+    result.push(format!(
+        "Theme Manager -- {} themes available",
+        index.themes.len()
+    ));
     result.push(String::new());
 
     for theme in &index.themes {
@@ -137,7 +144,10 @@ fn list_themes(args: &PluginArgs) -> Result<Vec<String>, String> {
             .as_ref()
             .map(|t| format!("#{}", t.join(" #")))
             .unwrap_or_default();
-        result.push(format!("  {}  {}  {}  ({})", theme.name, theme.author, layout, tags));
+        result.push(format!(
+            "  {}  {}  {}  ({})",
+            theme.name, theme.author, layout, tags
+        ));
         result.push(format!("       {}", theme.description));
         result.push(String::new());
     }
@@ -169,7 +179,10 @@ fn search_themes(args: &PluginArgs) -> Result<Vec<String>, String> {
         .collect();
 
     if matches.is_empty() {
-        return Ok(vec![format!("Theme Manager: no themes matching '{}'", query)]);
+        return Ok(vec![format!(
+            "Theme Manager: no themes matching '{}'",
+            query
+        )]);
     }
 
     let mut result = Vec::new();
@@ -187,7 +200,10 @@ fn search_themes(args: &PluginArgs) -> Result<Vec<String>, String> {
             .as_ref()
             .map(|t| format!("#{}", t.join(" #")))
             .unwrap_or_default();
-        result.push(format!("  {}  {}  {}  ({})", theme.name, theme.author, layout, tags));
+        result.push(format!(
+            "  {}  {}  {}  ({})",
+            theme.name, theme.author, layout, tags
+        ));
         result.push(format!("       {}", theme.description));
         result.push(String::new());
     }
@@ -222,8 +238,14 @@ fn theme_info(args: &PluginArgs) -> Result<Vec<String>, String> {
         format!("Theme: {}", theme.name),
         format!("  Author:     {}", theme.author),
         format!("  Version:    {}", theme.version),
-        format!("  Layout:     {}", theme.layout.as_deref().unwrap_or("default")),
-        format!("  Palette:    {}", theme.palette_style.as_deref().unwrap_or("default")),
+        format!(
+            "  Layout:     {}",
+            theme.layout.as_deref().unwrap_or("default")
+        ),
+        format!(
+            "  Palette:    {}",
+            theme.palette_style.as_deref().unwrap_or("default")
+        ),
         format!("  Tags:       {}", tags),
         format!("  Installed:  {}", installed),
         String::new(),
@@ -266,7 +288,14 @@ fn install_theme(args: &PluginArgs) -> Result<Vec<String>, String> {
             .map_err(|e| format!("Failed to copy theme file: {}", e))?;
     } else {
         let output = Command::new("curl")
-            .args(["-s", "--max-time", "30", "-o", &dest_path.to_string_lossy(), source])
+            .args([
+                "-s",
+                "--max-time",
+                "30",
+                "-o",
+                &dest_path.to_string_lossy(),
+                source,
+            ])
             .output()
             .map_err(|e| format!("Failed to run curl: {}", e))?;
 

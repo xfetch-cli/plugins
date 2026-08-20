@@ -46,31 +46,21 @@ fn get_tz_info(format: &str) -> Vec<String> {
         .output();
 
     let date_info = match now_output {
-        Ok(o) if o.status.success() => {
-            String::from_utf8_lossy(&o.stdout).trim().to_string()
-        }
+        Ok(o) if o.status.success() => String::from_utf8_lossy(&o.stdout).trim().to_string(),
         _ => String::new(),
     };
 
-    let utc_offset = Command::new("date")
-        .args(["+%:z"])
-        .output();
+    let utc_offset = Command::new("date").args(["+%:z"]).output();
 
     let offset = match utc_offset {
-        Ok(o) if o.status.success() => {
-            String::from_utf8_lossy(&o.stdout).trim().to_string()
-        }
+        Ok(o) if o.status.success() => String::from_utf8_lossy(&o.stdout).trim().to_string(),
         _ => String::new(),
     };
 
-    let local_time = Command::new("date")
-        .args(["+%A, %d %B %Y  %H:%M"])
-        .output();
+    let local_time = Command::new("date").args(["+%A, %d %B %Y  %H:%M"]).output();
 
     let datetime = match local_time {
-        Ok(o) if o.status.success() => {
-            String::from_utf8_lossy(&o.stdout).trim().to_string()
-        }
+        Ok(o) if o.status.success() => String::from_utf8_lossy(&o.stdout).trim().to_string(),
         _ => String::new(),
     };
 
@@ -140,34 +130,30 @@ fn run_windows_cmd(args: &[&str]) -> Option<String> {
         return None;
     }
     let s = String::from_utf8_lossy(&output.stdout).trim().to_string();
-    if s.is_empty() {
-        None
-    } else {
-        Some(s)
-    }
+    if s.is_empty() { None } else { Some(s) }
 }
 
 #[cfg(not(target_os = "windows"))]
 fn detect_timezone() -> Option<String> {
     let tz_file = Path::new("/etc/timezone");
-    if tz_file.exists() {
-        if let Ok(content) = fs::read_to_string(tz_file) {
-            let line = content.trim().to_string();
-            if !line.is_empty() {
-                return Some(line);
-            }
+    if tz_file.exists()
+        && let Ok(content) = fs::read_to_string(tz_file)
+    {
+        let line = content.trim().to_string();
+        if !line.is_empty() {
+            return Some(line);
         }
     }
 
     let localtime = Path::new("/etc/localtime");
-    if localtime.exists() {
-        if let Ok(path) = fs::read_link(localtime) {
-            let path_str = path.to_string_lossy();
-            if let Some(idx) = path_str.find("zoneinfo/") {
-                let tz = path_str[idx + 9..].to_string();
-                if !tz.is_empty() {
-                    return Some(tz);
-                }
+    if localtime.exists()
+        && let Ok(path) = fs::read_link(localtime)
+    {
+        let path_str = path.to_string_lossy();
+        if let Some(idx) = path_str.find("zoneinfo/") {
+            let tz = path_str[idx + 9..].to_string();
+            if !tz.is_empty() {
+                return Some(tz);
             }
         }
     }

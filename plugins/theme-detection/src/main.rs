@@ -50,8 +50,17 @@ fn get_theme_info() -> Vec<String> {
         (Some(_), None) | (None, None) => {
             if let Some(ref theme) = gtk_theme {
                 let variant = color_scheme.as_deref().unwrap_or("default");
-                let icon = if variant.contains("dark") { "" } else { "" };
-                result.push(format!("{} GTK Theme: {} ({})", icon, theme, variant_display(variant)));
+                let icon = if variant.contains("dark") {
+                    ""
+                } else {
+                    ""
+                };
+                result.push(format!(
+                    "{} GTK Theme: {} ({})",
+                    icon,
+                    theme,
+                    variant_display(variant)
+                ));
             } else {
                 result.push(" Theme: not detected".to_string());
                 return result;
@@ -60,8 +69,17 @@ fn get_theme_info() -> Vec<String> {
         (None, Some(_)) | (Some(_), Some(_)) => {
             if let Some(ref theme) = gtk_theme {
                 let variant = color_scheme.as_deref().unwrap_or("default");
-                let icon = if variant.contains("dark") { "" } else { "" };
-                result.push(format!("{} GTK: {} ({})", icon, theme, variant_display(variant)));
+                let icon = if variant.contains("dark") {
+                    ""
+                } else {
+                    ""
+                };
+                result.push(format!(
+                    "{} GTK: {} ({})",
+                    icon,
+                    theme,
+                    variant_display(variant)
+                ));
             }
             if let Some(ref theme) = kde_theme {
                 result.push(format!("   Plasma: {}", theme));
@@ -107,8 +125,7 @@ fn get_windows_theme_info() -> Vec<String> {
         _ => result.push("Theme: not detected".to_string()),
     }
 
-    if let Some(color) =
-        get_reg_dword(r"HKCU\Software\Microsoft\Windows\DWM", "ColorizationColor")
+    if let Some(color) = get_reg_dword(r"HKCU\Software\Microsoft\Windows\DWM", "ColorizationColor")
     {
         // DWM stores the color as AABBGGRR.
         let b = (color >> 16) & 0xFF;
@@ -135,8 +152,13 @@ fn get_reg_dword(subkey: &str, name: &str) -> Option<u32> {
     let out = String::from_utf8_lossy(&output.stdout);
     let value = out.lines().find_map(|line| {
         let line = line.trim();
-        line.starts_with(name)
-            .then(|| line.rsplit(' ').next().unwrap_or_default().trim().to_string())
+        line.starts_with(name).then(|| {
+            line.rsplit(' ')
+                .next()
+                .unwrap_or_default()
+                .trim()
+                .to_string()
+        })
     })?;
 
     u32::from_str_radix(value.trim_start_matches("0x"), 16).ok()
@@ -158,12 +180,7 @@ fn get_gsetting(schema: &str, key: &str) -> Option<String> {
         return None;
     }
 
-    Some(
-        value
-            .trim_matches('\'')
-            .trim_matches('"')
-            .to_string(),
-    )
+    Some(value.trim_matches('\'').trim_matches('"').to_string())
 }
 
 #[cfg(not(target_os = "windows"))]
@@ -180,12 +197,12 @@ fn get_kde_theme() -> Option<String> {
     ];
 
     for path in config_paths {
-        if Path::new(&path).exists() {
-            if let Ok(content) = fs::read_to_string(&path) {
-                for line in content.lines() {
-                    if line.starts_with("theme=") {
-                        return Some(line[6..].to_string());
-                    }
+        if Path::new(&path).exists()
+            && let Ok(content) = fs::read_to_string(&path)
+        {
+            for line in content.lines() {
+                if let Some(theme) = line.strip_prefix("theme=") {
+                    return Some(theme.to_string());
                 }
             }
         }
@@ -217,8 +234,8 @@ fn get_kde_color_scheme() -> Option<String> {
             if line.starts_with('[') {
                 break;
             }
-            if line.starts_with("ColorScheme=") {
-                return Some(line[12..].to_string());
+            if let Some(scheme) = line.strip_prefix("ColorScheme=") {
+                return Some(scheme.to_string());
             }
         }
     }

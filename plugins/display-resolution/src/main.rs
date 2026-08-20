@@ -31,25 +31,20 @@ fn main() {
 fn get_display_info() -> Vec<String> {
     if cfg!(target_os = "linux") {
         get_x11_display_info()
-            .or_else(|| get_wayland_display_info())
-            .or_else(|| get_xrandr_display_info())
+            .or_else(get_wayland_display_info)
+            .or_else(get_xrandr_display_info)
             .unwrap_or_else(|| vec![" Display: unknown".to_string()])
     } else if cfg!(target_os = "macos") {
-        get_macos_display_info()
-            .unwrap_or_else(|| vec![" Display: unknown".to_string()])
+        get_macos_display_info().unwrap_or_else(|| vec![" Display: unknown".to_string()])
     } else if cfg!(target_os = "windows") {
-        get_windows_display_info()
-            .unwrap_or_else(|| vec![" Display: unknown".to_string()])
+        get_windows_display_info().unwrap_or_else(|| vec![" Display: unknown".to_string()])
     } else {
         vec![" Display: unsupported platform".to_string()]
     }
 }
 
 fn get_xrandr_display_info() -> Option<Vec<String>> {
-    let output = Command::new("xrandr")
-        .args(["--current"])
-        .output()
-        .ok()?;
+    let output = Command::new("xrandr").args(["--current"]).output().ok()?;
 
     if !output.status.success() {
         return None;
@@ -66,7 +61,11 @@ fn get_xrandr_display_info() -> Option<Vec<String>> {
             if let Some(res) = extract_resolution_xrandr(line) {
                 let parts: Vec<&str> = line.split_whitespace().collect();
                 let name = parts[0];
-                let primary = if line.contains("primary") { " (primary)" } else { "" };
+                let primary = if line.contains("primary") {
+                    " (primary)"
+                } else {
+                    ""
+                };
                 if display_count == 1 {
                     result.push(format!(" {}: {}{}", name, res, primary));
                 } else {
@@ -76,18 +75,24 @@ fn get_xrandr_display_info() -> Option<Vec<String>> {
         }
     }
 
-    if result.is_empty() { None } else { Some(result) }
+    if result.is_empty() {
+        None
+    } else {
+        Some(result)
+    }
 }
 
 fn extract_resolution_xrandr(line: &str) -> Option<String> {
     let parts: Vec<&str> = line.split_whitespace().collect();
     for (i, part) in parts.iter().enumerate() {
         if part.contains('x') && part.chars().all(|c| c.is_ascii_digit() || c == 'x') {
-            if let Some(ref_rate) = parts.get(i + 1) {
-                if ref_rate.chars().all(|c| c.is_ascii_digit() || c == '.' || c == '*') {
-                    let rate = ref_rate.trim_end_matches('*').trim_end_matches('+');
-                    return Some(format!("{} @ {} Hz", part, rate));
-                }
+            if let Some(ref_rate) = parts.get(i + 1)
+                && ref_rate
+                    .chars()
+                    .all(|c| c.is_ascii_digit() || c == '.' || c == '*')
+            {
+                let rate = ref_rate.trim_end_matches('*').trim_end_matches('+');
+                return Some(format!("{} @ {} Hz", part, rate));
             }
             return Some(part.to_string());
         }
@@ -96,9 +101,7 @@ fn extract_resolution_xrandr(line: &str) -> Option<String> {
 }
 
 fn get_x11_display_info() -> Option<Vec<String>> {
-    let output = Command::new("xdpyinfo")
-        .output()
-        .ok()?;
+    let output = Command::new("xdpyinfo").output().ok()?;
 
     if !output.status.success() {
         return None;
@@ -115,7 +118,11 @@ fn get_x11_display_info() -> Option<Vec<String>> {
         }
     }
 
-    if result.is_empty() { None } else { Some(result) }
+    if result.is_empty() {
+        None
+    } else {
+        Some(result)
+    }
 }
 
 fn get_wayland_display_info() -> Option<Vec<String>> {
@@ -133,19 +140,24 @@ fn get_wayland_display_info() -> Option<Vec<String>> {
         if line.ends_with(':') && !line.starts_with(' ') {
             current_name = line.trim_end_matches(':').to_string();
         }
-        if let Some(resolution) = line.strip_suffix(" px") {
-            if resolution.contains('x') && resolution.chars().all(|c| c.is_ascii_digit() || c == 'x') {
-                let name = current_name.clone();
-                if result.is_empty() {
-                    result.push(format!(" {}: {} px", name, resolution));
-                } else {
-                    result.push(format!("   {}: {} px", name, resolution));
-                }
+        if let Some(resolution) = line.strip_suffix(" px")
+            && resolution.contains('x')
+            && resolution.chars().all(|c| c.is_ascii_digit() || c == 'x')
+        {
+            let name = current_name.clone();
+            if result.is_empty() {
+                result.push(format!(" {}: {} px", name, resolution));
+            } else {
+                result.push(format!("   {}: {} px", name, resolution));
             }
         }
     }
 
-    if result.is_empty() { None } else { Some(result) }
+    if result.is_empty() {
+        None
+    } else {
+        Some(result)
+    }
 }
 
 fn get_macos_display_info() -> Option<Vec<String>> {
@@ -168,7 +180,11 @@ fn get_macos_display_info() -> Option<Vec<String>> {
         }
     }
 
-    if result.is_empty() { None } else { Some(result) }
+    if result.is_empty() {
+        None
+    } else {
+        Some(result)
+    }
 }
 
 fn get_windows_display_info() -> Option<Vec<String>> {
