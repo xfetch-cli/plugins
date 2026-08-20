@@ -49,6 +49,38 @@
       <td><code>github-stats</code></td>
       <td>Displays GitHub user statistics such as stars, repos, pull requests, and followers.</td>
     </tr>
+    <tr>
+      <td><code>display-resolution</code></td>
+      <td>Displays monitor resolution and refresh rate.</td>
+    </tr>
+    <tr>
+      <td><code>music-player</code></td>
+      <td>Displays the currently playing track from MPD and/or Spotify.</td>
+    </tr>
+    <tr>
+      <td><code>temperature</code></td>
+      <td>CPU/SoC temperature module, reading the kernel thermal zones (Linux).</td>
+    </tr>
+    <tr>
+      <td><code>theme-detection</code></td>
+      <td>Detects and displays current GTK and KDE Plasma theme settings.</td>
+    </tr>
+    <tr>
+      <td><code>theme-manager</code></td>
+      <td>Browse, search, install, and inspect xfetch themes from the remote registry.</td>
+    </tr>
+    <tr>
+      <td><code>timezone</code></td>
+      <td>Displays current time, date, and timezone information.</td>
+    </tr>
+    <tr>
+      <td><code>user-info</code></td>
+      <td>Displays user account information (name, UID, GID, home, shell, groups).</td>
+    </tr>
+    <tr>
+      <td><code>weather</code></td>
+      <td>Displays current weather conditions.</td>
+    </tr>
   </tbody>
 </table>
 

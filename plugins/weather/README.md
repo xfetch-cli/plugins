@@ -79,7 +79,7 @@
       <td><code>format</code></td>
       <td><code>string</code></td>
       <td>No</td>
-      <td>Custom wttr.in format string. Default: <code>%c+%t+%w+%h+%p</code></td>
+      <td>Custom wttr.in format string. Default: <code>%C|%t|%w|%h|%p</code></td>
     </tr>
   </tbody>
 </table>
