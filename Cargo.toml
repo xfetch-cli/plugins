@@ -16,4 +16,4 @@ members = [
 resolver = "2"
 
 [workspace.dependencies]
-xfetch-plugin-api = { git = "https://github.com/xfetch-cli/api", package = "xfetch-plugin-api" }
+xfetch-plugin-api = { version = "0.1.0", package = "xfetch-plugin-api" }
