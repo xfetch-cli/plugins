@@ -215,7 +215,8 @@ dependencies = [
 [[package]]
 name = "xfetch-plugin-api"
 version = "0.1.0"
-source = "git+https://github.com/xfetch-cli/api#9ee7758cb83b794a330f67bf873e857d65e3eb07"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "12221ce4b24bbe34ade292e45ebd872b1af82bf038ab739645412419d20a3a02"
 dependencies = [
  "serde",
  "serde_json",

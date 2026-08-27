@@ -3,6 +3,7 @@ name = "xfetch-plugin-user-info"
 version = "0.1.0"
 edition = "2024"
 license = "MIT"
+description = "Xfetch plugin that shows user account information from local probes"
 
 [dependencies]
 serde = { version = "1", features = ["derive"] }
