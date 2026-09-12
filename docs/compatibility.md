@@ -77,6 +77,26 @@
       <td>✓</td><td>✓</td><td>✓</td>
       <td>Requires <code>curl</code> and network access.</td>
     </tr>
+    <tr>
+      <td><code>wasm-crypto</code></td>
+      <td>✓</td><td>✓</td><td>✓</td>
+      <td>WebAssembly core module; needs the allowlisted Coinbase origin.</td>
+    </tr>
+    <tr>
+      <td><code>wasm-ip-geo</code></td>
+      <td>✓</td><td>✓</td><td>✓</td>
+      <td>WebAssembly component (componentize-py); needs the allowlisted ipapi.co origin.</td>
+    </tr>
+    <tr>
+      <td><code>wasm-pacman</code></td>
+      <td>✓</td><td>✗</td><td>✗</td>
+      <td>Requires the <code>pacman</code> CLI (Arch-family distributions).</td>
+    </tr>
+    <tr>
+      <td><code>wasm-proc</code></td>
+      <td>✓</td><td>✗</td><td>~</td>
+      <td>Requires procfs; WSL works, native Windows does not.</td>
+    </tr>
   </tbody>
 </table>
 

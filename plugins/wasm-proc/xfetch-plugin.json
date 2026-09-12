@@ -1,0 +1,21 @@
+{
+  "manifest_version": 1,
+  "name": "wasm-proc",
+  "version": "0.2.0",
+  "description": "Load average, memory usage and uptime read from /proc (freestanding C)",
+  "kind": "info_provider",
+  "runtime": "core",
+  "build": "sh build.sh",
+  "artifact": "dist/wasm-proc.wasm",
+  "capabilities": {
+    "fs": [
+      { "host": "/proc", "guest": "/proc", "mode": "ro" }
+    ]
+  },
+  "limits": {
+    "timeout_ms": 3000,
+    "memory_mb": 16,
+    "output_kb": 16,
+    "host_call_kb": 16
+  }
+}
