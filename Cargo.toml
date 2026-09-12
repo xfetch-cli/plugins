@@ -18,12 +18,4 @@ resolver = "2"
 
 [workspace.dependencies]
 xfetch-plugin-api = { version = "0.2.0", package = "xfetch-plugin-api" }
-# Path dependency for local multi-repo development. Once xfetch-guest-api is
-# published, switch this to a versioned registry dependency.
-xfetch-guest-api = { path = "../api/crates/guest-api", package = "xfetch-guest-api" }
-
-# Local multi-repo development: build against the sibling api checkout so wasm
-# guests get wasm-compatible helpers before the next crates.io release. Remove
-# this section when building standalone (or once the crates are published).
-[patch.crates-io]
-xfetch-plugin-api = { path = "../api/crates/plugin-api" }
+xfetch-guest-api = { version = "0.2.0", package = "xfetch-guest-api" }
