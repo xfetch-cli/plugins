@@ -81,8 +81,30 @@
       <td><code>weather</code></td>
       <td>Displays current weather conditions.</td>
     </tr>
+    <tr>
+      <td><code>wasm-crypto</code></td>
+      <td>Live crypto spot prices (BTC, ETH, ...) fetched through the sandboxed HTTP host call.</td>
+    </tr>
+    <tr>
+      <td><code>wasm-ip-geo</code></td>
+      <td>Public IP, location, network and timezone from ipapi.co (Python component).</td>
+    </tr>
+    <tr>
+      <td><code>wasm-pacman</code></td>
+      <td>Repository vs AUR package counts from the local pacman database (Go).</td>
+    </tr>
+    <tr>
+      <td><code>wasm-proc</code></td>
+      <td>Load average, memory usage and uptime read from <code>/proc</code> (freestanding C).</td>
+    </tr>
   </tbody>
 </table>
+
+<p>
+  The <code>wasm-*</code> plugins ship sandboxed WebAssembly artifacts and
+  manifest-declared capabilities; see
+  <a href="https://github.com/xfetch-cli/xfetch/blob/main/docs/WASM.md">xfetch/docs/WASM.md</a>.
+</p>
 
 <p>
   See <a href="./docs/compatibility.md">Platform Compatibility</a> for which

@@ -1,0 +1,21 @@
+{
+  "manifest_version": 1,
+  "name": "wasm-pacman",
+  "version": "0.2.0",
+  "description": "Package counts (repository vs AUR/foreign) from the local pacman database",
+  "kind": "info_provider",
+  "runtime": "core",
+  "build": "GOOS=wasip1 GOARCH=wasm go build -o dist/wasm-pacman.wasm .",
+  "artifact": "dist/wasm-pacman.wasm",
+  "capabilities": {
+    "exec": {
+      "allow": ["pacman"]
+    }
+  },
+  "limits": {
+    "timeout_ms": 20000,
+    "memory_mb": 256,
+    "output_kb": 64,
+    "host_call_kb": 2048
+  }
+}

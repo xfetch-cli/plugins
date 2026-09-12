@@ -1,1 +1,3 @@
 /target
+# Built wasm artifacts (installer output)
+dist/

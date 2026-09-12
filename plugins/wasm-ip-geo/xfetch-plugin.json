@@ -1,0 +1,21 @@
+{
+  "manifest_version": 1,
+  "name": "wasm-ip-geo",
+  "version": "0.2.0",
+  "description": "Public IP, location, network and timezone via ipapi.co (Python component)",
+  "kind": "info_provider",
+  "runtime": "component",
+  "build": "componentize-py -d ../../../api/wit -w plugin componentize app -p . -o dist/wasm-ip-geo.wasm",
+  "artifact": "dist/wasm-ip-geo.wasm",
+  "capabilities": {
+    "http": {
+      "allow": ["https://ipapi.co/*"]
+    }
+  },
+  "limits": {
+    "timeout_ms": 20000,
+    "memory_mb": 256,
+    "output_kb": 128,
+    "host_call_kb": 256
+  }
+}

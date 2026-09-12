@@ -1,6 +1,6 @@
 [package]
 name = "xfetch-plugin-theme-detection"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2024"
 license = "MIT"
 description = "Xfetch plugin that detects the system color theme (GTK/KDE Plasma)"

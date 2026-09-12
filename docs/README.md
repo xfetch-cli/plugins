@@ -28,6 +28,7 @@
   <li><a href="#response-format">Response Format</a></li>
   <li><a href="#example-plugin">Example Plugin</a></li>
   <li><a href="#testing">Testing</a></li>
+  <li><a href="#webassembly">WebAssembly Plugins</a></li>
   <li><a href="#contribution-guidelines">Contribution Guidelines</a></li>
 </ul>
 
@@ -93,6 +94,13 @@ edition = "2024"
   <li>Legacy development path: <code>./plugins/&lt;name&gt;/target/release/</code>.</li>
 </ol>
 
+<p>
+  WebAssembly artifacts use the same discovery: installers place them as
+  <code>xfetch-plugin-&lt;name&gt;.wasm</code> (plus a sidecar manifest), and
+  development builds are looked up under
+  <code>target/wasm32-wasip1/release/</code>.
+</p>
+
 <h2 id="protocol">Protocol</h2>
 
 <p>
@@ -136,7 +144,7 @@ edition = "2024"
     <tr>
       <td><code>kind</code></td>
       <td><code>string</code></td>
-      <td>Plugin type. Currently only <code>"logo_animation"</code> is supported.</td>
+      <td>Plugin type: <code>"logo_animation"</code> or <code>"info_provider"</code>.</td>
     </tr>
     <tr>
       <td><code>lines</code></td>
@@ -257,6 +265,48 @@ fn main() {
 <pre><code class="language-bash">xfetch plugin install my-plugin
 xfetch
 </code></pre>
+
+<h2 id="webassembly">WebAssembly Plugins</h2>
+
+<p>
+  Plugins can also be WebAssembly artifacts. The core detects them by their
+  binary header and runs them in a sandboxed runtime with the exact same JSON
+  protocol, so the request/response formats above apply unchanged.
+</p>
+
+<ul>
+  <li>
+    <strong>Core modules</strong> (<code>wasm32-wasip1</code>) run as WASI
+    commands; host capabilities (HTTP, processes, filesystem, environment) are
+    exposed through the <code>xfetch.host_call</code> bridge, wrapped by the
+    <a href="https://github.com/xfetch-cli/api/tree/main/crates/guest-api">xfetch-guest-api</a>
+    crate.
+  </li>
+  <li>
+    <strong>Components</strong> export <code>run</code> from the
+    <code>xfetch:runtime</code> WIT world and use typed host imports; they can
+    be built with <code>componentize-py</code>, <code>componentize-js</code> or
+    <code>wit-bindgen</code>.
+  </li>
+  <li>
+    A sidecar manifest (<code>xfetch-plugin.json</code> in the source,
+    installed as <code>xfetch-plugin-&lt;name&gt;.json</code>) declares
+    deny-by-default capabilities and runtime limits.
+  </li>
+  <li>
+    Tooling: <code>xfetch wasm inspect</code>,
+    <code>xfetch wasm run</code> and <code>xfetch wasm wit</code>.
+  </li>
+</ul>
+
+<p>
+  Reference examples live in
+  <a href="../plugins/">plugins/</a>: <code>wasm-crypto</code> (Rust, HTTP),
+  <code>wasm-ip-geo</code> (Python component, HTTP),
+  <code>wasm-pacman</code> (Go, allowlisted exec) and <code>wasm-proc</code>
+  (freestanding C, read-only <code>/proc</code>). The full runtime reference is
+  <a href="https://github.com/xfetch-cli/xfetch/blob/main/docs/WASM.md">xfetch/docs/WASM.md</a>.
+</p>
 
 <h2 id="contribution-guidelines">Contribution Guidelines</h2>
 

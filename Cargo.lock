@@ -3,6 +3,12 @@
 version = 4
 
 [[package]]
+name = "base64"
+version = "0.22.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "72b3254f16251a8381aa12e40e3c4d2f0199f8c6508fbecb9d91f575e0fbb8c6"
+
+[[package]]
 name = "cfg-if"
 version = "1.0.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -204,8 +210,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "xfetch-guest-api"
+version = "0.2.0"
+dependencies = [
+ "base64",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "xfetch-plugin-animate-logo"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "serde",
  "serde_json",
@@ -214,9 +229,7 @@ dependencies = [
 
 [[package]]
 name = "xfetch-plugin-api"
-version = "0.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "12221ce4b24bbe34ade292e45ebd872b1af82bf038ab739645412419d20a3a02"
+version = "0.2.0"
 dependencies = [
  "serde",
  "serde_json",
@@ -224,7 +237,7 @@ dependencies = [
 
 [[package]]
 name = "xfetch-plugin-chocolatey"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "serde",
  "serde_json",
@@ -233,7 +246,7 @@ dependencies = [
 
 [[package]]
 name = "xfetch-plugin-display-resolution"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "serde",
  "serde_json",
@@ -242,7 +255,7 @@ dependencies = [
 
 [[package]]
 name = "xfetch-plugin-docker"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "serde",
  "serde_json",
@@ -251,7 +264,7 @@ dependencies = [
 
 [[package]]
 name = "xfetch-plugin-github-stats"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "serde",
  "serde_json",
@@ -260,7 +273,7 @@ dependencies = [
 
 [[package]]
 name = "xfetch-plugin-music-player"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "serde",
  "serde_json",
@@ -269,7 +282,7 @@ dependencies = [
 
 [[package]]
 name = "xfetch-plugin-temperature"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "serde",
  "serde_json",
@@ -278,7 +291,7 @@ dependencies = [
 
 [[package]]
 name = "xfetch-plugin-theme-detection"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "serde",
  "serde_json",
@@ -287,7 +300,7 @@ dependencies = [
 
 [[package]]
 name = "xfetch-plugin-theme-manager"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "dirs",
  "serde",
@@ -297,7 +310,7 @@ dependencies = [
 
 [[package]]
 name = "xfetch-plugin-timezone"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "serde",
  "serde_json",
@@ -306,7 +319,7 @@ dependencies = [
 
 [[package]]
 name = "xfetch-plugin-user-info"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "serde",
  "serde_json",
@@ -314,8 +327,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "xfetch-plugin-wasm-crypto"
+version = "0.2.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "xfetch-guest-api",
+ "xfetch-plugin-api",
+]
+
+[[package]]
 name = "xfetch-plugin-weather"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "serde",
  "serde_json",

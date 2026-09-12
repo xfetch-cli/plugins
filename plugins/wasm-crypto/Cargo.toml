@@ -1,11 +1,12 @@
 [package]
-name = "xfetch-plugin-music-player"
+name = "xfetch-plugin-wasm-crypto"
 version = "0.2.0"
 edition = "2024"
 license = "MIT"
-description = "Xfetch plugin that shows the current track via playerctl/mpd/Spotify probes"
+description = "Xfetch WebAssembly plugin that shows crypto spot prices via the Coinbase API"
 
 [dependencies]
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
+xfetch-guest-api = { workspace = true }
 xfetch-plugin-api = { workspace = true }

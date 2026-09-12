@@ -1,0 +1,21 @@
+{
+  "manifest_version": 1,
+  "name": "wasm-crypto",
+  "version": "0.2.0",
+  "description": "Crypto spot prices (Coinbase) fetched through the sandboxed HTTP host call",
+  "kind": "info_provider",
+  "runtime": "core",
+  "build": "cargo build --release --target wasm32-wasip1",
+  "artifact": "../../target/wasm32-wasip1/release/xfetch-plugin-wasm-crypto.wasm",
+  "capabilities": {
+    "http": {
+      "allow": ["https://api.coinbase.com/*"]
+    }
+  },
+  "limits": {
+    "timeout_ms": 15000,
+    "memory_mb": 64,
+    "output_kb": 64,
+    "host_call_kb": 256
+  }
+}
