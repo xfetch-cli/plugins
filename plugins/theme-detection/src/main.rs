@@ -51,9 +51,9 @@ fn get_theme_info() -> Vec<String> {
             if let Some(ref theme) = gtk_theme {
                 let variant = color_scheme.as_deref().unwrap_or("default");
                 let icon = if variant.contains("dark") {
-                    ""
+                    "\u{f186}"
                 } else {
-                    ""
+                    "\u{f185}"
                 };
                 result.push(format!(
                     "{} GTK Theme: {} ({})",
@@ -70,9 +70,9 @@ fn get_theme_info() -> Vec<String> {
             if let Some(ref theme) = gtk_theme {
                 let variant = color_scheme.as_deref().unwrap_or("default");
                 let icon = if variant.contains("dark") {
-                    ""
+                    "\u{f186}"
                 } else {
-                    ""
+                    "\u{f185}"
                 };
                 result.push(format!(
                     "{} GTK: {} ({})",
@@ -91,11 +91,11 @@ fn get_theme_info() -> Vec<String> {
     }
 
     if let Some(ref icons) = icon_theme {
-        result.push(format!("   Icons: {}", icons));
+        result.push(format!("  \u{f03e} Icons: {}", icons));
     }
 
     if let Some(ref cursor) = cursor_theme {
-        result.push(format!("   Cursor: {}", cursor));
+        result.push(format!("  \u{f245} Cursor: {}", cursor));
     }
 
     if let Some(ref font) = font_name {

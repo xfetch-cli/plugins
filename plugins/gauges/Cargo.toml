@@ -1,0 +1,11 @@
+[package]
+name = "xfetch-plugin-gauges"
+version = "0.2.0"
+edition = "2024"
+license = "MIT"
+description = "Xfetch plugin that renders memory, swap, disk and battery usage as progress bars"
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+sysinfo = "0.39"
+xfetch-plugin-api = { workspace = true }
