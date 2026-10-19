@@ -23,6 +23,11 @@
       <td>Pure computation, no OS dependencies.</td>
     </tr>
     <tr>
+      <td><code>banner-text</code></td>
+      <td>✓</td><td>✓</td><td>✓</td>
+      <td>Pure text handling and local file reads; no OS-specific dependencies.</td>
+    </tr>
+    <tr>
       <td><code>chocolatey</code></td>
       <td>✗</td><td>✗</td><td>✓</td>
       <td>Requires the <code>choco</code> CLI, which only exists on Windows; elsewhere it responds with a fallback line.</td>

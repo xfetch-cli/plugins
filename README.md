@@ -38,6 +38,10 @@
       <td>Animated ASCII logos with sweep, wave, rainbow, sparkle, breathing, and frame modes.</td>
     </tr>
     <tr>
+      <td><code>banner-text</code></td>
+      <td>Emits text lines from a file or literal argument; works with image logos.</td>
+    </tr>
+    <tr>
       <td><code>chocolatey</code></td>
       <td>Counts packages installed via Chocolatey (Windows package manager).</td>
     </tr>
