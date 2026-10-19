@@ -2,6 +2,7 @@
 members = [
   "plugins/animate-logo",
   "plugins/banner",
+  "plugins/banner-text",
   "plugins/chocolatey",
   "plugins/display-resolution",
   "plugins/docker",

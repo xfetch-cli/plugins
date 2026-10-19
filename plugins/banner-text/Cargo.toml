@@ -1,0 +1,10 @@
+[package]
+name = "xfetch-plugin-banner-text"
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+description = "Xfetch info plugin that emits text lines from a file or literal argument"
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+xfetch-plugin-api = { workspace = true }
