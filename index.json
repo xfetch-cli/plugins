@@ -59,7 +59,7 @@
     {
       "name": "gauges",
       "description": "Xfetch plugin that renders memory, swap, disk and battery usage as progress bars",
-      "version": "0.2.0",
+      "version": "0.2.1",
       "kind": "info_provider",
       "runtime": "native",
       "path": "plugins/gauges",
@@ -113,7 +113,7 @@
     {
       "name": "theme-manager",
       "description": "Xfetch plugin that fetches and manages themes from the XFetch registry",
-      "version": "0.2.0",
+      "version": "0.2.1",
       "kind": "info_provider",
       "runtime": "native",
       "path": "plugins/theme-manager",
