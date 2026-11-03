@@ -1,0 +1,220 @@
+{
+  "schema_version": 1,
+  "catalog_version": "1.0.2",
+  "entries": [
+    {
+      "name": "animate-logo",
+      "description": "Xfetch plugin that animates the logo with user-controlled frames and duration",
+      "version": "0.2.0",
+      "kind": "logo_animation",
+      "runtime": "native",
+      "path": "plugins/animate-logo",
+      "install": "animate-logo"
+    },
+    {
+      "name": "banner",
+      "description": "Xfetch logo-animation plugin that prints a Chinese/Japanese proverb banner under (or above) the logo",
+      "version": "0.2.0",
+      "kind": "logo_animation",
+      "runtime": "native",
+      "path": "plugins/banner",
+      "install": "banner"
+    },
+    {
+      "name": "banner-text",
+      "description": "Xfetch info plugin that emits text lines from a file or literal argument",
+      "version": "0.1.0",
+      "kind": "info_provider",
+      "runtime": "native",
+      "path": "plugins/banner-text",
+      "install": "banner-text"
+    },
+    {
+      "name": "chocolatey",
+      "description": "Xfetch plugin that counts locally installed Chocolatey packages",
+      "version": "0.2.0",
+      "kind": "info_provider",
+      "runtime": "native",
+      "path": "plugins/chocolatey",
+      "install": "chocolatey"
+    },
+    {
+      "name": "display-resolution",
+      "description": "Xfetch plugin that reports the display resolution via xrandr/wayland probes",
+      "version": "0.2.0",
+      "kind": "info_provider",
+      "runtime": "native",
+      "path": "plugins/display-resolution",
+      "install": "display-resolution"
+    },
+    {
+      "name": "docker",
+      "description": "Xfetch plugin that reports Docker status and containers from the local daemon",
+      "version": "0.2.0",
+      "kind": "info_provider",
+      "runtime": "native",
+      "path": "plugins/docker",
+      "install": "docker"
+    },
+    {
+      "name": "gauges",
+      "description": "Xfetch plugin that renders memory, swap, disk and battery usage as progress bars",
+      "version": "0.2.1",
+      "kind": "info_provider",
+      "runtime": "native",
+      "path": "plugins/gauges",
+      "install": "gauges"
+    },
+    {
+      "name": "github-stats",
+      "description": "Xfetch plugin that shows GitHub statistics via the GitHub API",
+      "version": "0.2.0",
+      "kind": "info_provider",
+      "runtime": "native",
+      "path": "plugins/github-stats",
+      "install": "github-stats"
+    },
+    {
+      "name": "langs",
+      "description": "Xfetch plugin that shows the languages of a repository or an org/user with glyphs and brand colors",
+      "version": "0.2.0",
+      "kind": "info_provider",
+      "runtime": "native",
+      "path": "plugins/langs",
+      "install": "langs"
+    },
+    {
+      "name": "music-player",
+      "description": "Xfetch plugin that shows the current track via playerctl/mpd/Spotify probes",
+      "version": "0.2.0",
+      "kind": "info_provider",
+      "runtime": "native",
+      "path": "plugins/music-player",
+      "install": "music-player"
+    },
+    {
+      "name": "temperature",
+      "description": "Xfetch plugin that shows CPU temperature from hwmon/sensors probes",
+      "version": "0.2.0",
+      "kind": "info_provider",
+      "runtime": "native",
+      "path": "plugins/temperature",
+      "install": "temperature"
+    },
+    {
+      "name": "theme-detection",
+      "description": "Xfetch plugin that detects the system color theme (GTK/KDE Plasma)",
+      "version": "0.2.0",
+      "kind": "info_provider",
+      "runtime": "native",
+      "path": "plugins/theme-detection",
+      "install": "theme-detection"
+    },
+    {
+      "name": "theme-manager",
+      "description": "Xfetch plugin that fetches and manages themes from the XFetch registry",
+      "version": "0.2.1",
+      "kind": "info_provider",
+      "runtime": "native",
+      "path": "plugins/theme-manager",
+      "install": "theme-manager"
+    },
+    {
+      "name": "timezone",
+      "description": "Xfetch plugin that shows the current timezone via local probes",
+      "version": "0.2.0",
+      "kind": "info_provider",
+      "runtime": "native",
+      "path": "plugins/timezone",
+      "install": "timezone"
+    },
+    {
+      "name": "user-info",
+      "description": "Xfetch plugin that shows user account information from local probes",
+      "version": "0.2.0",
+      "kind": "info_provider",
+      "runtime": "native",
+      "path": "plugins/user-info",
+      "install": "user-info"
+    },
+    {
+      "name": "wasm-crypto",
+      "description": "Crypto spot prices (Coinbase) fetched through the sandboxed HTTP host call",
+      "version": "0.2.0",
+      "kind": "info_provider",
+      "runtime": "wasm",
+      "guest_runtime": "core",
+      "path": "plugins/wasm-crypto",
+      "install": "wasm-crypto",
+      "capabilities": {
+        "http": {
+          "allow": [
+            "https://api.coinbase.com/*"
+          ]
+        }
+      }
+    },
+    {
+      "name": "wasm-ip-geo",
+      "description": "Public IP, location, network and timezone via ipapi.co (Python component)",
+      "version": "0.2.0",
+      "kind": "info_provider",
+      "runtime": "wasm",
+      "guest_runtime": "component",
+      "path": "plugins/wasm-ip-geo",
+      "install": "wasm-ip-geo",
+      "capabilities": {
+        "http": {
+          "allow": [
+            "https://ipapi.co/*"
+          ]
+        }
+      }
+    },
+    {
+      "name": "wasm-pacman",
+      "description": "Package counts (repository vs AUR/foreign) from the local pacman database",
+      "version": "0.2.0",
+      "kind": "info_provider",
+      "runtime": "wasm",
+      "guest_runtime": "core",
+      "path": "plugins/wasm-pacman",
+      "install": "wasm-pacman",
+      "capabilities": {
+        "exec": {
+          "allow": [
+            "pacman"
+          ]
+        }
+      }
+    },
+    {
+      "name": "wasm-proc",
+      "description": "Load average, memory usage and uptime read from /proc (freestanding C)",
+      "version": "0.2.0",
+      "kind": "info_provider",
+      "runtime": "wasm",
+      "guest_runtime": "core",
+      "path": "plugins/wasm-proc",
+      "install": "wasm-proc",
+      "capabilities": {
+        "fs": [
+          {
+            "host": "/proc",
+            "guest": "/proc",
+            "mode": "ro"
+          }
+        ]
+      }
+    },
+    {
+      "name": "weather",
+      "description": "Xfetch plugin that shows the current weather from wttr.in",
+      "version": "0.2.0",
+      "kind": "info_provider",
+      "runtime": "native",
+      "path": "plugins/weather",
+      "install": "weather"
+    }
+  ]
+}

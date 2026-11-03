@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-11-03 — v1.0.2
+
+Release train v1.0.2 (catalog schema 1, catalog_version 1.0.2).
+
+### Dependency updates
+
+- Updated the workspace lockfile with semver-compatible patches: `libc` 0.2.191, `libredox` 0.1.25, `objc2` 0.6.5, `redox_users` 0.5.3, `serde_json` 1.0.154, `syn` 3.0.9, `thiserror` 2.0.21, `thiserror-impl` 2.0.21 and `unicode-ident` 1.0.27.
+- `gauges` 0.2.1: moved to `sysinfo` 0.40.1 and adapted the fallible constructors and the removal of `Disks::list()`. The measurements and output format are unchanged.
+- `theme-manager` 0.2.1: moved to `dirs` 7.0.0. The `dirs::config_dir()` call is unchanged.
+- Updated the security-audit workflow to `actions/checkout` 7.0.1 and the pinned `dtolnay/rust-toolchain` commit.
+- Regenerated `index.json` so the catalog reports the new `gauges` and `theme-manager` versions.
+
+### Addon catalog index
+
+- Added the root `index.json`, a machine-readable addon catalog consumed by `xfetch plugin search` and the other remote addon discovery commands.
+- Added `scripts/generate_catalog.py` to regenerate the catalog from each plugin's `Cargo.toml` or `xfetch-plugin.json`; `--check` fails when the committed index is stale.
+- The catalog lists all 20 addons, sorted by name. Native entries use `runtime: "native"` and WebAssembly entries use `runtime: "wasm"` with their manifest capabilities preserved.
+- Documented `banner`, `gauges` and `langs` in the README and platform compatibility tables. All three were already present in `index.json`.
+- Crate versions remain 0.2.0 except `banner-text` 0.1.0, `gauges` 0.2.1 and `theme-manager` 0.2.1; the catalog version is 1.0.2.
+
 ## 2026-10-24 — Dependency security automation
 
 - Added `.github/workflows/security-audit.yml`: runs `cargo audit` 0.22.2 with `--deny warnings` on push, pull request and a weekly schedule, with actions pinned by commit SHA and no persisted checkout credentials.

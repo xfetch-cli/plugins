@@ -102,10 +102,11 @@ fn collect(args: &PluginArgs) -> Vec<String> {
 
     let mut lines = Vec::new();
 
-    if enabled("memory") || enabled("swap") {
-        let sys = System::new_with_specifics(
+    if (enabled("memory") || enabled("swap"))
+        && let Ok(sys) = System::new_with_specifics(
             RefreshKind::nothing().with_memory(MemoryRefreshKind::everything()),
-        );
+        )
+    {
         if enabled("memory") {
             lines.push(format!(
                 "{} {}",
@@ -204,11 +205,13 @@ fn human(bytes: u64) -> String {
 }
 
 fn disk_lines(style: &str, width: usize, include_tmpfs: bool, glyph: &str) -> Vec<String> {
-    let disks = Disks::new_with_refreshed_list();
+    let Ok(disks) = Disks::new_with_refreshed_list() else {
+        return Vec::new();
+    };
     let mut seen = std::collections::HashSet::new();
     let mut rows: Vec<(String, String)> = Vec::new();
 
-    for disk in disks.list() {
+    for disk in &disks {
         let total = disk.total_space();
         if total == 0 {
             continue;

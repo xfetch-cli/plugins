@@ -23,6 +23,11 @@
       <td>Pure computation, no OS dependencies.</td>
     </tr>
     <tr>
+      <td><code>banner</code></td>
+      <td>✓</td><td>✓</td><td>✓</td>
+      <td>Logo-animation plugin; pure computation, but needs a TTY and a CJK-capable font.</td>
+    </tr>
+    <tr>
       <td><code>banner-text</code></td>
       <td>✓</td><td>✓</td><td>✓</td>
       <td>Pure text handling and local file reads; no OS-specific dependencies.</td>
@@ -43,9 +48,19 @@
       <td>Requires the Docker CLI (Docker Desktop on Windows/macOS).</td>
     </tr>
     <tr>
+      <td><code>gauges</code></td>
+      <td>✓</td><td>✓</td><td>✓</td>
+      <td>Memory, swap and disks via <code>sysinfo</code> on all platforms; battery lines are Linux-only.</td>
+    </tr>
+    <tr>
       <td><code>github-stats</code></td>
       <td>✓</td><td>✓</td><td>✓</td>
       <td>Requires <code>curl</code> and network access.</td>
+    </tr>
+    <tr>
+      <td><code>langs</code></td>
+      <td>✓</td><td>✓</td><td>✓</td>
+      <td>Requires <code>curl</code> and network access to the GitHub API; set <code>GITHUB_TOKEN</code>/<code>GH_TOKEN</code> for higher rate limits.</td>
     </tr>
     <tr>
       <td><code>music-player</code></td>
