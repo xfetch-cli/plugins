@@ -13,7 +13,8 @@
 - Added the root `index.json`, a machine-readable addon catalog consumed by `xfetch plugin search` and the other remote addon discovery commands.
 - Added `scripts/generate_catalog.py` to regenerate the catalog from each plugin's `Cargo.toml` or `xfetch-plugin.json`; `--check` fails when the committed index is stale.
 - The catalog lists all 20 addons, sorted by name. Native entries use `runtime: "native"` and WebAssembly entries use `runtime: "wasm"` with their manifest capabilities preserved.
-- No plugin code or manifests changed. Crate versions remain 0.2.0 (except the existing `banner-text` 0.1.0); only the catalog version is 1.0.2.
+- Documented `banner`, `gauges` and `langs` in the README and platform compatibility tables. All three were already present in `index.json`.
+- Crate versions remain 0.2.0 except `banner-text` 0.1.0, `gauges` 0.2.1 and `theme-manager` 0.2.1; the catalog version is 1.0.2.
 
 ## 2026-10-24 — Dependency security automation
 

@@ -38,6 +38,10 @@
       <td>Animated ASCII logos with sweep, wave, rainbow, sparkle, breathing, and frame modes.</td>
     </tr>
     <tr>
+      <td><code>banner</code></td>
+      <td>Prints a Chinese/Japanese proverb banner under or above the ASCII logo; requires a CJK-capable terminal font.</td>
+    </tr>
+    <tr>
       <td><code>banner-text</code></td>
       <td>Emits text lines from a file or literal argument; works with image logos.</td>
     </tr>
@@ -50,8 +54,16 @@
       <td>Displays Docker container statistics using the local Docker CLI.</td>
     </tr>
     <tr>
+      <td><code>gauges</code></td>
+      <td>Renders memory, swap, disk and battery usage as progress bars.</td>
+    </tr>
+    <tr>
       <td><code>github-stats</code></td>
       <td>Displays GitHub user statistics such as stars, repos, pull requests, and followers.</td>
+    </tr>
+    <tr>
+      <td><code>langs</code></td>
+      <td>Shows the languages of a GitHub repository or aggregates a user/org with brand colors.</td>
     </tr>
     <tr>
       <td><code>display-resolution</code></td>
