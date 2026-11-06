@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-11-06 — Banner width fix
+
+- `banner` 0.2.1: centre the proverb against the visible logo width using
+  Unicode terminal width instead of counting ANSI escape bytes. Coloured logos
+  no longer widen the logo block or push the box layout to the right.
+
 ## 2026-11-06 — SDK 0.3.0 migration
 
 - Updated the workspace to `xfetch-plugin-api` 0.3.0 and

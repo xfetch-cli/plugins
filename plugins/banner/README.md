@@ -28,8 +28,10 @@ without modifying the logo file.
 Set `frames_path` to a text file to use its first `===`-separated frame as the
 banner text instead of the built-in list.
 
-The banner is centred to the logo width, counting CJK characters as two
-columns. Requires a terminal with a CJK font (see the repo notes) and a TTY.
+The banner is centred to the logo width, counting terminal display width so
+ANSI colour codes are ignored. Longer banners wrap to the logo width instead
+of widening the logo block, which keeps box layouts aligned. Requires a
+terminal with a CJK font (see the repo notes) and a TTY.
 
 ## Proverb list
 
