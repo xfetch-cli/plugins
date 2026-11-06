@@ -6,6 +6,15 @@
   Unicode terminal width instead of counting ANSI escape bytes. Coloured logos
   no longer widen the logo block or push the box layout to the right.
 
+## 2026-11-06 — CI and wasm validation
+
+- Added a `Tests` workflow: fmt, clippy, workspace tests and catalog
+  verification on pull requests and on main after merge. It does not build or
+  publish release artifacts.
+- Validated the wasm guests with their native toolchains: Rust
+  (`wasm-crypto`), componentize-py (`wasm-ip-geo`), Go (`wasm-pacman`) and
+  clang/wasm-ld (`wasm-proc`), including runtime checks against xfetch 1.0.3.
+
 ## 2026-11-06 — SDK 0.3.0 migration
 
 - Updated the workspace to `xfetch-plugin-api` 0.3.0 and
