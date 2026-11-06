@@ -4,9 +4,9 @@ version = 4
 
 [[package]]
 name = "base64"
-version = "0.22.1"
+version = "0.23.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "72b3254f16251a8381aa12e40e3c4d2f0199f8c6508fbecb9d91f575e0fbb8c6"
+checksum = "ac07cdecf99051d9a5238b80f35af32cdeba5b336e55d957b318b50137e18da5"
 
 [[package]]
 name = "bitflags"
@@ -420,10 +420,20 @@ dependencies = [
 ]
 
 [[package]]
-name = "xfetch-guest-api"
-version = "0.2.0"
+name = "xfetch-api-common"
+version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "34af1966a017fadc5f8412d7e8e28ea4774d436004caaaeb2a5174a581a790e2"
+checksum = "3d7a35b6c4f442aea26e73bb821978a637bd31261d80d4e97c11185876dd684c"
+dependencies = [
+ "serde",
+ "serde_json",
+]
+
+[[package]]
+name = "xfetch-guest-api"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a48b8ca8b0a8f1218f09dbd93570cef036cd9bd19f9b3763e25b912ad1805ab3"
 dependencies = [
  "base64",
  "serde",
@@ -441,12 +451,13 @@ dependencies = [
 
 [[package]]
 name = "xfetch-plugin-api"
-version = "0.2.0"
+version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "54bc785c4c4bb18d4041edff98baeff88a9ff5595b52212a3a01c7d56e74fb8d"
+checksum = "0455e40808edcf2da4ced9c032eaee0c89b130ab76aa214257b8d90d1a5f5df5"
 dependencies = [
  "serde",
  "serde_json",
+ "xfetch-api-common",
 ]
 
 [[package]]
