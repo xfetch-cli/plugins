@@ -3,8 +3,8 @@
 <h2>SDK compatibility</h2>
 
 <p>
-  The plugins in this repository target <code>xfetch-plugin-api 0.3.0</code>
-  and <code>xfetch-guest-api 0.3.0</code>. The JSON protocol remains
+  The plugins in this repository target <code>xfetch-plugin-api 0.3.1</code>
+  and <code>xfetch-guest-api 0.3.1</code>. The JSON protocol remains
   <code>1</code> and the WIT package remains
   <code>xfetch:runtime@0.1.0</code>. Plugins built against the previous
   <code>0.2.0</code> SDK remain runtime-compatible.

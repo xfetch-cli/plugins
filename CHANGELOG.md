@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-11-06 — SDK 0.3.1 migration
+
+- Updated the workspace to `xfetch-plugin-api` 0.3.1 and
+  `xfetch-guest-api` 0.3.1.
+- The JSON protocol remains version 1 and the WIT remains
+  `xfetch:runtime@0.1.0`.
+- 0.3.1 removes an unused direct `serde` dependency from
+  `xfetch-guest-api`; plugin code is unchanged.
+
 ## 2026-11-06 — Banner width fix
 
 - `banner` 0.2.1: centre the proverb against the visible logo width using
