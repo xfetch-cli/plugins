@@ -1,5 +1,29 @@
 # Changelog
 
+## 2026-11-06 — Banner width fix
+
+- `banner` 0.2.1: centre the proverb against the visible logo width using
+  Unicode terminal width instead of counting ANSI escape bytes. Coloured logos
+  no longer widen the logo block or push the box layout to the right.
+
+## 2026-11-06 — CI and wasm validation
+
+- Added a `Tests` workflow: fmt, clippy, workspace tests and catalog
+  verification on pull requests and on main after merge. It does not build or
+  publish release artifacts.
+- Validated the wasm guests with their native toolchains: Rust
+  (`wasm-crypto`), componentize-py (`wasm-ip-geo`), Go (`wasm-pacman`) and
+  clang/wasm-ld (`wasm-proc`), including runtime checks against xfetch 1.0.3.
+
+## 2026-11-06 — SDK 0.3.0 migration
+
+- Updated the workspace to `xfetch-plugin-api` 0.3.0 and
+  `xfetch-guest-api` 0.3.0.
+- The JSON protocol remains version 1 and the WIT remains
+  `xfetch:runtime@0.1.0`.
+- Plugin code, manifests and catalog versions are unchanged; this is a
+  dependency alignment with the core 0.3.0 SDK.
+
 ## 2026-11-03 — v1.0.2
 
 Release train v1.0.2 (catalog schema 1, catalog_version 1.0.2).

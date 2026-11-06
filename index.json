@@ -14,7 +14,7 @@
     {
       "name": "banner",
       "description": "Xfetch logo-animation plugin that prints a Chinese/Japanese proverb banner under (or above) the logo",
-      "version": "0.2.0",
+      "version": "0.2.1",
       "kind": "logo_animation",
       "runtime": "native",
       "path": "plugins/banner",

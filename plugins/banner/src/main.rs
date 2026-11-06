@@ -61,7 +61,11 @@ fn build_frame(request: &LogoAnimationRequest) -> AnimationFrame {
     let above = style.contains("above");
     let text = banner_text(request, style);
     let width = logo_width(&request.lines);
-    let banner: Vec<String> = text.iter().map(|line| center(line, width)).collect();
+    let banner: Vec<String> = text
+        .iter()
+        .flat_map(|line| wrap(line, width))
+        .map(|line| center(&line, width))
+        .collect();
 
     let mut lines = Vec::new();
     if above {
@@ -111,6 +115,38 @@ fn logo_width(lines: &[String]) -> usize {
         .unwrap_or(0)
 }
 
+/// Splits a banner line into chunks that fit the logo width.
+///
+/// CJK text has no spaces, so wrapping is per character and each chunk is
+/// measured with the same terminal-width rules used for centering. This keeps
+/// the logo block from growing horizontally and pushing a box layout right.
+fn wrap(text: &str, width: usize) -> Vec<String> {
+    if width == 0 {
+        return vec![text.to_string()];
+    }
+
+    let mut lines = Vec::new();
+    let mut current = String::new();
+    let mut current_width = 0;
+
+    for ch in text.chars() {
+        let ch_width = display_width(&ch.to_string());
+        if current_width + ch_width > width && !current.is_empty() {
+            lines.push(std::mem::take(&mut current));
+            current_width = 0;
+        }
+        current.push(ch);
+        current_width += ch_width;
+    }
+    if !current.is_empty() {
+        lines.push(current);
+    }
+    if lines.is_empty() {
+        lines.push(String::new());
+    }
+    lines
+}
+
 fn center(text: &str, width: usize) -> String {
     let text_width = display_width(text);
     if text_width >= width {
@@ -121,27 +157,14 @@ fn center(text: &str, width: usize) -> String {
     format!("{}{}{}", " ".repeat(left), text, " ".repeat(right))
 }
 
-/// Display width: East Asian wide characters count as two columns.
+/// Display width in terminal columns.
+///
+/// `console` skips ANSI sequences and uses Unicode display width, so the
+/// banner is centred against the logo the user actually sees. The previous
+/// character-count implementation treated the escape bytes of coloured logo
+/// lines as visible columns and widened the whole logo block.
 fn display_width(text: &str) -> usize {
-    text.chars().map(|ch| if is_wide(ch) { 2 } else { 1 }).sum()
-}
-
-fn is_wide(ch: char) -> bool {
-    let c = ch as u32;
-    (0x1100..=0x115F).contains(&c)
-        || (0x2E80..=0x303E).contains(&c)
-        || (0x3041..=0x33FF).contains(&c)
-        || (0x3400..=0x4DBF).contains(&c)
-        || (0x4E00..=0x9FFF).contains(&c)
-        || (0xA000..=0xA4CF).contains(&c)
-        || (0xAC00..=0xD7A3).contains(&c)
-        || (0xF900..=0xFAFF).contains(&c)
-        || (0xFE30..=0xFE4F).contains(&c)
-        || (0xFF00..=0xFF60).contains(&c)
-        || (0xFFE0..=0xFFE6).contains(&c)
-        || (0x1F300..=0x1F64F).contains(&c)
-        || (0x1F900..=0x1F9FF).contains(&c)
-        || (0x20000..=0x3FFFD).contains(&c)
+    console::measure_text_width(text)
 }
 
 #[cfg(test)]
@@ -163,23 +186,69 @@ mod tests {
     #[test]
     fn banner_goes_below_the_logo() {
         let frame = build_frame(&request("banner-static"));
-        assert_eq!(frame.lines.len(), 4);
         assert_eq!(frame.lines[0], "  ██  ");
-        assert!(frame.lines[3].contains(PROVERBS[0]));
+        assert_eq!(frame.lines[1], " ████ ");
+        assert_eq!(frame.lines[2], "");
+        let banner: String = frame.lines[3..].iter().map(|line| line.trim()).collect();
+        assert!(banner.contains(PROVERBS[0]));
     }
 
     #[test]
     fn banner_above_puts_it_first() {
         let frame = build_frame(&request("banner-above"));
-        assert!(frame.lines[0].contains(PROVERBS[0]));
-        assert_eq!(frame.lines[1], "");
-        assert_eq!(frame.lines[2], "  ██  ");
+        let blank = frame
+            .lines
+            .iter()
+            .position(String::is_empty)
+            .expect("blank separator");
+        let banner: String = frame.lines[..blank]
+            .iter()
+            .map(|line| line.trim())
+            .collect();
+        assert!(banner.contains(PROVERBS[0]));
+        assert_eq!(frame.lines[blank + 1], "  ██  ");
     }
 
     #[test]
     fn centered_line_matches_logo_width() {
         let req = LogoAnimationRequest::new(
             vec!["  ██  ".to_string(), " ████ ".to_string()],
+            Some(vec![vec!["X".to_string()]]),
+            LogoAnimationArgs {
+                style: Some("banner".to_string()),
+                ..LogoAnimationArgs::default()
+            },
+        );
+        let frame = build_frame(&req);
+        let banner = frame.lines.last().expect("banner line");
+        assert_eq!(display_width(banner), display_width("  ██  "));
+    }
+
+    #[test]
+    fn wraps_a_banner_wider_than_the_logo() {
+        let req = LogoAnimationRequest::new(
+            vec!["  ██  ".to_string()],
+            Some(vec![vec!["千里之行".to_string()]]),
+            LogoAnimationArgs {
+                style: Some("banner-static".to_string()),
+                ..LogoAnimationArgs::default()
+            },
+        );
+        let frame = build_frame(&req);
+        let banner: Vec<&String> = frame.lines.iter().skip(2).collect();
+        assert!(banner.len() > 1, "long banner must wrap");
+        for line in banner {
+            assert!(
+                display_width(line) <= display_width("  ██  "),
+                "banner line wider than logo: {line:?}"
+            );
+        }
+    }
+
+    #[test]
+    fn centered_line_ignores_ansi_codes() {
+        let req = LogoAnimationRequest::new(
+            vec!["\x1b[32m  ██  \x1b[0m".to_string()],
             Some(vec![vec!["X".to_string()]]),
             LogoAnimationArgs {
                 style: Some("banner".to_string()),
