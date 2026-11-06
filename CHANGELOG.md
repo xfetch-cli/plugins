@@ -4,6 +4,8 @@
 
 - Updated the workspace to `xfetch-plugin-api` 0.3.1 and
   `xfetch-guest-api` 0.3.1.
+- SDK dependencies now resolve from crates.io; the temporary git branch is no
+  longer required.
 - The JSON protocol remains version 1 and the WIT remains
   `xfetch:runtime@0.1.0`.
 - 0.3.1 removes an unused direct `serde` dependency from
