@@ -55,7 +55,7 @@ fn resolve_text(args: &PluginArgs) -> String {
 fn normalize_lines(raw: &str, blank_line: bool) -> Vec<String> {
     let mut lines: Vec<String> = raw
         .lines()
-        .map(|line| compensate_wide_chars(line.trim_end()))
+        .map(|line| line.trim_end().to_string())
         .collect();
     while lines.first().is_some_and(|line| line.is_empty()) {
         lines.remove(0);
@@ -67,25 +67,6 @@ fn normalize_lines(raw: &str, blank_line: bool) -> Vec<String> {
         lines.insert(0, String::new());
     }
     lines
-}
-
-/// Adds zero-width spaces after wide characters.
-///
-/// The current box layouts measure each row with `chars().count()`, so a CJK
-/// character counts as one column even though terminals render it as two. The
-/// invisible padding makes that character count match the visible width, which
-/// keeps the right border aligned. It is harmless once the core measures the
-/// display width instead.
-fn compensate_wide_chars(line: &str) -> String {
-    let mut out = String::with_capacity(line.len());
-    for ch in line.chars() {
-        out.push(ch);
-        let width = console::measure_text_width(&ch.to_string());
-        for _ in 1..width {
-            out.push('\u{200b}');
-        }
-    }
-    out
 }
 
 fn expand_path(path: &str) -> PathBuf {
@@ -110,7 +91,7 @@ fn home_dir() -> Option<PathBuf> {
 
 #[cfg(test)]
 mod tests {
-    use super::{compensate_wide_chars, normalize_lines};
+    use super::normalize_lines;
 
     #[test]
     fn trims_trailing_whitespace_and_edge_blank_lines() {
@@ -127,18 +108,5 @@ mod tests {
     #[test]
     fn empty_text_returns_no_lines() {
         assert!(normalize_lines(" \n\t\n", true).is_empty());
-    }
-
-    #[test]
-    fn wide_characters_get_zero_width_padding() {
-        let line = compensate_wide_chars("秘密の距離");
-        assert_eq!(line.chars().count(), 10);
-        assert_eq!(line.matches('\u{200b}').count(), 5);
-        assert_eq!(console::measure_text_width(&line), 10);
-    }
-
-    #[test]
-    fn ascii_is_not_padded() {
-        assert_eq!(compensate_wide_chars("banner"), "banner");
     }
 }
