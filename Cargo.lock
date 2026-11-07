@@ -493,8 +493,9 @@ dependencies = [
 
 [[package]]
 name = "xfetch-plugin-banner-text"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
+ "console",
  "serde",
  "xfetch-plugin-api",
 ]
