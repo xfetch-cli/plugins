@@ -74,10 +74,6 @@ Each line is emitted separately. Trailing whitespace is removed and leading or
 trailing empty lines are discarded. Leading spaces on non-empty lines are
 preserved.
 
-Wide characters (CJK, emoji) are followed by invisible zero-width spaces so the
-current box layouts, which count characters instead of terminal columns, keep
-the right border aligned. The rendered text is unchanged.
-
 ## Output
 
 Given a file containing `永遠は朽ち、儚さが記憶を刻む`, the plugin returns:

@@ -1,11 +1,10 @@
 # Changelog
 
-## 2026-11-07 — banner-text 0.1.1
+## 2026-11-07 — banner-text 0.1.2
 
-- `banner-text` 0.1.1: add invisible zero-width padding after wide characters
-  so the current box layouts keep the right border aligned. It is a
-  compatibility shim for the character-count width calculation; the rendered
-  text is unchanged.
+- Reverted the zero-width padding added in 0.1.1: it rendered as tofu squares
+  on terminals or fonts without a U+200B glyph. The plugin emits the text
+  unchanged again; the box border alignment remains a core layout issue.
 
 ## 2026-11-06 — SDK 0.3.1 migration
 
