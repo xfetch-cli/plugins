@@ -23,7 +23,7 @@
     {
       "name": "banner-text",
       "description": "Xfetch info plugin that emits text lines from a file or literal argument",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "kind": "info_provider",
       "runtime": "native",
       "path": "plugins/banner-text",
