@@ -2,7 +2,7 @@
 name = "xfetch-plugin-theme-manager"
 version = "0.2.1"
 edition = "2024"
-license = "MIT"
+license = "GPL-3.0-only"
 description = "Xfetch plugin that fetches and manages themes from the XFetch registry"
 
 [dependencies]

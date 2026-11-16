@@ -158,3 +158,11 @@
   See <a href="./docs/README.md">docs/README.md</a> for the protocol specification,
   naming conventions, testing workflow, and contribution guidelines for new plugins.
 </p>
+
+<h2>Licensing</h2>
+
+<p>
+  The code authored by xscriptor in this repository is GPL-3.0-only. Addons
+  and additional functionality contributed by other developers may use their
+  own licenses; see <a href="./ADDON-LICENSING.md">ADDON-LICENSING.md</a>.
+</p>

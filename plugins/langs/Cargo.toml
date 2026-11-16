@@ -2,7 +2,7 @@
 name = "xfetch-plugin-langs"
 version = "0.2.0"
 edition = "2024"
-license = "MIT"
+license = "GPL-3.0-only"
 description = "Xfetch plugin that shows the languages of a repository or an org/user with glyphs and brand colors"
 
 [dependencies]

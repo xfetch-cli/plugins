@@ -2,7 +2,7 @@
 name = "xfetch-plugin-banner"
 version = "0.2.1"
 edition = "2024"
-license = "MIT"
+license = "GPL-3.0-only"
 description = "Xfetch logo-animation plugin that prints a Chinese/Japanese proverb banner under (or above) the logo"
 
 [dependencies]

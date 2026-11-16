@@ -101,5 +101,4 @@ Linux, macOS and Windows. The plugin uses only the Rust standard library for
 file access and home-directory expansion.
 
 ## License
-
-MIT
+GPL-3.0-only

@@ -2,7 +2,7 @@
 name = "xfetch-plugin-temperature"
 version = "0.2.0"
 edition = "2024"
-license = "MIT"
+license = "GPL-3.0-only"
 description = "Xfetch plugin that shows CPU temperature from hwmon/sensors probes"
 
 [dependencies]
