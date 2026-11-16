@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-11-17 — display-resolution 0.2.1
+
+- Fixed xrandr parsing on Xwayland and multi-monitor setups: geometry offsets
+  such as `1920x1200+0+0` are no longer reported as `x`, and the first monitor
+  is only counted when a resolution is found.
+
 ## 2026-11-07 — banner-text 0.1.2
 
 - Reverted the zero-width padding added in 0.1.1: it rendered as tofu squares
