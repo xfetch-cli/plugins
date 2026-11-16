@@ -2,7 +2,7 @@
 name = "xfetch-plugin-animate-logo"
 version = "0.2.0"
 edition = "2024"
-license = "MIT"
+license = "GPL-3.0-only"
 description = "Xfetch plugin that animates the logo with user-controlled frames and duration"
 
 [dependencies]

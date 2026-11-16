@@ -2,7 +2,7 @@
 name = "xfetch-plugin-docker"
 version = "0.2.0"
 edition = "2024"
-license = "MIT"
+license = "GPL-3.0-only"
 description = "Xfetch plugin that reports Docker status and containers from the local daemon"
 
 [dependencies]

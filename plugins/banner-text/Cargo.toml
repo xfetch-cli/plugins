@@ -2,7 +2,7 @@
 name = "xfetch-plugin-banner-text"
 version = "0.1.2"
 edition = "2024"
-license = "MIT"
+license = "GPL-3.0-only"
 description = "Xfetch info plugin that emits text lines from a file or literal argument"
 
 [dependencies]

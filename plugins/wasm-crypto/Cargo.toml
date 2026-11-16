@@ -2,7 +2,7 @@
 name = "xfetch-plugin-wasm-crypto"
 version = "0.2.0"
 edition = "2024"
-license = "MIT"
+license = "GPL-3.0-only"
 description = "Xfetch WebAssembly plugin that shows crypto spot prices via the Coinbase API"
 
 [dependencies]
