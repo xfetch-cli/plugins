@@ -1,6 +1,6 @@
 [package]
 name = "xfetch-plugin-display-resolution"
-version = "0.2.0"
+version = "0.2.1"
 edition = "2024"
 license = "GPL-3.0-only"
 description = "Xfetch plugin that reports the display resolution via xrandr/wayland probes"

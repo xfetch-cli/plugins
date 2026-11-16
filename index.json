@@ -41,7 +41,7 @@
     {
       "name": "display-resolution",
       "description": "Xfetch plugin that reports the display resolution via xrandr/wayland probes",
-      "version": "0.2.0",
+      "version": "0.2.1",
       "kind": "info_provider",
       "runtime": "native",
       "path": "plugins/display-resolution",

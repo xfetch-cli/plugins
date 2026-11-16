@@ -56,21 +56,21 @@ fn get_xrandr_display_info() -> Option<Vec<String>> {
 
     for line in stdout.lines() {
         let line = line.trim();
-        if line.contains(" connected ") && line.contains('x') {
+        if line.contains(" connected ")
+            && let Some(res) = extract_resolution_xrandr(line)
+        {
             display_count += 1;
-            if let Some(res) = extract_resolution_xrandr(line) {
-                let parts: Vec<&str> = line.split_whitespace().collect();
-                let name = parts[0];
-                let primary = if line.contains("primary") {
-                    " (primary)"
-                } else {
-                    ""
-                };
-                if display_count == 1 {
-                    result.push(format!(" {}: {}{}", name, res, primary));
-                } else {
-                    result.push(format!("   {}: {}{}", name, res, primary));
-                }
+            let parts: Vec<&str> = line.split_whitespace().collect();
+            let name = parts[0];
+            let primary = if line.contains("primary") {
+                " (primary)"
+            } else {
+                ""
+            };
+            if display_count == 1 {
+                result.push(format!(" {}: {}{}", name, res, primary));
+            } else {
+                result.push(format!("   {}: {}{}", name, res, primary));
             }
         }
     }
@@ -85,19 +85,48 @@ fn get_xrandr_display_info() -> Option<Vec<String>> {
 fn extract_resolution_xrandr(line: &str) -> Option<String> {
     let parts: Vec<&str> = line.split_whitespace().collect();
     for (i, part) in parts.iter().enumerate() {
-        if part.contains('x') && part.chars().all(|c| c.is_ascii_digit() || c == 'x') {
-            if let Some(ref_rate) = parts.get(i + 1)
-                && ref_rate
-                    .chars()
-                    .all(|c| c.is_ascii_digit() || c == '.' || c == '*')
+        if let Some(resolution) = resolution_from_xrandr_token(part) {
+            if let Some(rate) = parts
+                .get(i + 1)
+                .and_then(|token| rate_from_xrandr_token(token))
             {
-                let rate = ref_rate.trim_end_matches('*').trim_end_matches('+');
-                return Some(format!("{} @ {} Hz", part, rate));
+                return Some(format!("{resolution} @ {rate} Hz"));
             }
-            return Some(part.to_string());
+            return Some(resolution.to_string());
         }
     }
     None
+}
+
+/// Extracts the resolution from an xrandr geometry token.
+///
+/// `1920x1200+0+0` becomes `1920x1200`. The bare `x` token from the
+/// `(normal left inverted right x axis y axis)` suffix is not a resolution.
+fn resolution_from_xrandr_token(token: &str) -> Option<&str> {
+    let end = token
+        .find(|c: char| !(c.is_ascii_digit() || c == 'x'))
+        .unwrap_or(token.len());
+    let resolution = &token[..end];
+    let (width, height) = resolution.split_once('x')?;
+    if width.len() < 2
+        || height.len() < 2
+        || !width.chars().all(|c| c.is_ascii_digit())
+        || !height.chars().all(|c| c.is_ascii_digit())
+    {
+        return None;
+    }
+    Some(resolution)
+}
+
+fn rate_from_xrandr_token(token: &str) -> Option<&str> {
+    let rate = token.trim_end_matches(['*', '+']);
+    if rate.is_empty()
+        || !rate.chars().all(|c| c.is_ascii_digit() || c == '.')
+        || !rate.contains('.')
+    {
+        return None;
+    }
+    Some(rate)
 }
 
 fn get_x11_display_info() -> Option<Vec<String>> {
@@ -222,4 +251,53 @@ Write-Output "${w}x${h}"
     }
 
     Some(vec![format!(" Display: {}", res)])
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{extract_resolution_xrandr, resolution_from_xrandr_token};
+
+    #[test]
+    fn xrandr_geometry_offset_is_not_part_of_the_resolution() {
+        assert_eq!(
+            extract_resolution_xrandr(
+                "eDP-1 connected 1920x1200+0+0 (normal left inverted right x axis y axis) 340mm x 220mm"
+            )
+            .as_deref(),
+            Some("1920x1200")
+        );
+    }
+
+    #[test]
+    fn xrandr_primary_display_ignores_auto_position() {
+        assert_eq!(
+            extract_resolution_xrandr(
+                "HDMI-1 connected primary 3840x2160+1920+0 (normal left inverted right x axis y axis) 600mm x 340mm"
+            )
+            .as_deref(),
+            Some("3840x2160")
+        );
+    }
+
+    #[test]
+    fn xrandr_prefers_explicit_refresh_rate() {
+        assert_eq!(
+            extract_resolution_xrandr("DP-1 connected 2560x1440 144.00*+").as_deref(),
+            Some("2560x1440 @ 144.00 Hz")
+        );
+    }
+
+    #[test]
+    fn xrandr_interlaced_mode_is_accepted() {
+        assert_eq!(
+            extract_resolution_xrandr("DP-2 connected 1920x1080i+0+0").as_deref(),
+            Some("1920x1080")
+        );
+    }
+
+    #[test]
+    fn bare_x_token_is_not_a_resolution() {
+        assert_eq!(resolution_from_xrandr_token("x"), None);
+        assert_eq!(resolution_from_xrandr_token("axis"), None);
+    }
 }
